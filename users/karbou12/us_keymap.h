@@ -190,7 +190,7 @@
 #define OS_WIN_CAPTURE_1 KC_PSCR
 #define OS_WIN_CAPTURE_2 LALT(KC_PSCR)
 #define OS_WIN_CAPTURE_3 LSG(KC_S)
-#define OS_WIN_LOCK      LCTL(LALT(KC_DEL))
+#define OS_WIN_LOCK      LCA(KC_DEL)
 #define OS_WIN_DF        DF(OS_MAC_BASE)
 
 // ==========   QAZ   ==========
