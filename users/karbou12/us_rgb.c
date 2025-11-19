@@ -8,6 +8,7 @@
 #ifdef RGBLIGHT_LAYERS
 static bool us_is_keyboard_post_init_user_called = false;
 static bool us_is_key_pressed_to_skip_rec_rgb = false;
+static bool us_is_change_layer_key_pressed_on_non_default_layer = false;
 
 static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
     if (!us_is_keyboard_post_init_user_called) {
@@ -42,6 +43,10 @@ static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
 
 static void us_record_rgblight_on_layer_of(const us_user_config_field_e field) {
     if (!us_is_keyboard_post_init_user_called) {
+        return;
+    }
+
+    if (us_is_change_layer_key_pressed_on_non_default_layer) {
         return;
     }
 
@@ -170,11 +175,13 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
     uprintf("%s def:%u, layer_state:%u, state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state), get_highest_layer(state));
 #endif
 
-    // store rgblight automatically if it is changed on vial.
-    if (get_highest_layer(state) == 0 && get_highest_layer(layer_state) == 0 && get_highest_layer(default_layer_state) == 0) {
-        us_record_rgblight_on_layer_of(US_FIELD_LAYER0);
-    } else if (US_EECONFIG_get_auto_save_rgb_from_mem() && !us_is_key_pressed_to_skip_rec_rgb) {
-        us_record_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
+    if (!us_is_change_layer_key_pressed_on_non_default_layer) {
+        // store rgblight automatically if it is changed on vial.
+        if (get_highest_layer(state) == 0 && get_highest_layer(layer_state) == 0 && get_highest_layer(default_layer_state) == 0) {
+            us_record_rgblight_on_layer_of(US_FIELD_LAYER0);
+        } else if (US_EECONFIG_get_auto_save_rgb_from_mem() && !us_is_key_pressed_to_skip_rec_rgb) {
+            us_record_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
+        }
     }
 
     us_set_rgblight_on_layer_of(get_highest_layer(state));
@@ -216,6 +223,15 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
 bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mod_state = get_mods();
     switch (keycode) {
+        case QK_DEF_LAYER ... QK_DEF_LAYER_MAX:
+        case QK_PERSISTENT_DEF_LAYER ... QK_PERSISTENT_DEF_LAYER_MAX:
+            if (us_is_rgblight_per_layer_enabled(record)) {
+                if (get_highest_layer(layer_state) != US_FIELD_LAYER0) {
+                    us_is_change_layer_key_pressed_on_non_default_layer = true;
+                }
+            }
+            return true;
+
         case USR_RGB_RETAIN_VAL_TOG:
             if (us_is_rgblight_per_layer_enabled(record)) {
                 const bool cur_flag = US_EECONFIG_get_retain_val_from_mem();
@@ -288,6 +304,12 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case QK_MOMENTARY ... QK_MOMENTARY_MAX:
+            if (!record->event.pressed) {
+                us_is_change_layer_key_pressed_on_non_default_layer = false;
+            }
+            break;
+
         case UG_NEXT ... RGB_M_TW:
             if (rgblight_is_enabled()) {
                 us_record_rgblight_on_layer_of(US_FIELD_LAYER0);
