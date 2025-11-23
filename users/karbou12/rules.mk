@@ -8,6 +8,7 @@ CONSOLE_ENABLE = yes
 
 SRC += $(USER_PATH)/karbou12.c \
        $(USER_PATH)/us_utils.c \
+       $(USER_PATH)/us_status.c \
        $(USER_PATH)/us_eeconfig.c
 
 ifeq ($(strip $(CUSTOM_RGBLIGHT)), yes)

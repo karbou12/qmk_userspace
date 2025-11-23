@@ -4,6 +4,7 @@
 #include "us_eeconfig.h"
 #include "us_rgb.h"
 #include "us_utils.h"
+#include "us_status.h"
 
 #ifdef RGBLIGHT_LAYERS
 static bool us_is_keyboard_post_init_user_called = false;
@@ -43,6 +44,10 @@ static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
 
 static void us_record_rgblight_on_layer_of(const us_user_config_field_e field) {
     if (!us_is_keyboard_post_init_user_called) {
+        return;
+    }
+
+    if (!US_STATUS_can_record_rgblight()) {
         return;
     }
 
@@ -184,7 +189,9 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
         }
     }
 
-    us_set_rgblight_on_layer_of(get_highest_layer(state));
+    if (US_STATUS_can_set_rgblight()) {
+        us_set_rgblight_on_layer_of(get_highest_layer(state));
+    }
 
     return state;
 }
@@ -229,6 +236,20 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (get_highest_layer(layer_state) != US_FIELD_LAYER0) {
                     us_is_change_layer_key_pressed_on_non_default_layer = true;
                 }
+            }
+            return true;
+
+        case USR_RESET:
+            if (record->event.pressed) {
+                if (us_is_rgblight_per_layer_enabled(record)) {
+                    if (get_highest_layer(layer_state) != US_FIELD_LAYER0) {
+                        US_STATUS_set_user_reset_key_pressed_on_non_default_layer(true);
+                    }
+                }
+                set_single_default_layer(US_FIELD_LAYER0);
+                us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
+            } else {
+                US_STATUS_set_user_reset_key_pressed_on_non_default_layer(false);
             }
             return true;
 
