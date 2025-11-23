@@ -258,6 +258,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                 rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(cur_flag ? US_BLINK_OFF : US_BLINK_ON, 300, 2);
                 US_EECONFIG_update_retain_val_to_eeprom(!cur_flag);
+                us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
                 if (US_UTIL_get_current_layer(layer_state) != US_FIELD_LAYER0) {
                     us_is_key_pressed_to_skip_rec_rgb = true;
                 }
