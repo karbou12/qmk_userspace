@@ -172,6 +172,7 @@ bool US_EECONFIG_process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case USR_RESET:
             if (record->event.pressed) {
+                rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(US_BLINK_RESET, 300, 3);
                 eeconfig_init_user_datablock();
             }
