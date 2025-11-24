@@ -259,9 +259,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case USR_RESET:
             if (record->event.pressed) {
                 if (us_is_rgblight_per_layer_enabled(record)) {
-                    if (get_highest_layer(layer_state) != US_FIELD_LAYER0) {
-                        US_STATUS_set_user_reset_key_pressed_on_non_default_layer(true);
-                    }
+                    US_STATUS_set_user_reset_key_pressed_on_non_default_layer(true);
                 }
                 set_single_default_layer(US_FIELD_LAYER0);
                 us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
