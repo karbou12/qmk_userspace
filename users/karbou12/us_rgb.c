@@ -10,6 +10,11 @@
 static bool us_is_keyboard_post_init_user_called = false;
 static bool us_is_key_pressed_to_skip_rec_rgb = false;
 
+static rgblight_segment_t PROGMEM df_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_TURQUOISE});
+static const rgblight_segment_t * const PROGMEM df_blink_layers[] = RGBLIGHT_LAYERS_LIST(
+    df_layer
+);
+
 static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
     if (!us_is_keyboard_post_init_user_called) {
         return;
@@ -183,12 +188,25 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
     }
 
     if (US_STATUS_can_set_rgblight()) {
+        const us_user_config_field_e field = get_highest_layer(state);
         if (!US_STATUS_can_record_rgblight() && get_highest_layer(layer_state) != 0) {
-            rgblight_layers = km_rgb_layers;
-            rgblight_blink_layer_repeat(get_highest_layer(state), 300, 1);
+            const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
+
+            if (p) {
+                uint8_t use_val = p->hsv.v;
+                if (US_EECONFIG_get_retain_val_from_mem() && (field != US_FIELD_LAYER0)) {
+                    const us_hsvm_t* p_layer0 = US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0);
+                    use_val = p_layer0->hsv.v;
+                }
+                df_layer->hue = p->hsv.h;
+                df_layer->sat = p->hsv.s;
+                df_layer->val = use_val;
+            }
+            rgblight_layers = df_blink_layers;
+            rgblight_blink_layer_repeat(0, 300, 1);
             us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
         } else {
-            us_set_rgblight_on_layer_of(get_highest_layer(state));
+            us_set_rgblight_on_layer_of(field);
         }
     }
 
