@@ -4,7 +4,7 @@ VIAL_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 OS_DETECTION_ENABLE = yes
 CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY = yes
-CONSOLE_ENABLE = yes
+# CONSOLE_ENABLE = yes
 
 SRC += $(USER_PATH)/karbou12.c \
        $(USER_PATH)/us_utils.c \
