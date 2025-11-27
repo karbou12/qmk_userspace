@@ -1,0 +1,4 @@
+CUSTOM_RGBLIGHT = yes
+CUSTOM_KEY_OVERRIDE = yes
+
+SRC += km_rgb.c
