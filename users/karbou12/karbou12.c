@@ -70,7 +70,7 @@ void keyboard_post_init_user(void) {
 #endif
 
     US_DUMP_EECONFIG();
-#ifdef KEY_OVERRIDE_ENABLE
+#ifdef CUSTOM_KEY_OVERRIDE_ENABLE
     vial_init();
 #endif
 }
@@ -140,7 +140,7 @@ void caps_word_set_user(bool active) {
 #endif
 }
 
-#ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     return US_TH_get_hold_on_other_key_press(keycode, record);
 }
