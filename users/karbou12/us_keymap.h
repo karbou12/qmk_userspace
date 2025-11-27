@@ -4,8 +4,12 @@
 
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
+#ifndef OS_MAC_BASE
 #define OS_MAC_BASE 0
+#endif
+#ifndef OS_WIN_BASE
 #define OS_WIN_BASE 4
+#endif
 
 // Mac
 #define OS_MAC_RAISE     OS_MAC_BASE + 1
