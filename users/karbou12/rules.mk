@@ -20,9 +20,11 @@ ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
 endif
 
 ifeq ($(strip $(CUSTOM_KEY_OVERRIDE)), yes)
+	OPT_DEFS += -DCUSTOM_KEY_OVERRIDE_ENABLE
 	SRC += $(USER_PATH)/us_key_override.c
 endif
 
 ifeq ($(strip $(CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY)), yes)
+	OPT_DEFS += -DCUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 	SRC += $(USER_PATH)/us_tap_hold.c
 endif
