@@ -9,3 +9,6 @@
 
 #define RGBLIGHT_LAYERS
 #define RGBLIGHT_LAYER_BLINK
+
+#define OS_WIN_BASE 0
+#define OS_MAC_BASE 4
