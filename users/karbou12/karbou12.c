@@ -8,6 +8,10 @@
 #include "us_rgb.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
 
+#ifdef USE_UINT16_KEYCODE_FOR_VIAL
+uint16_t g_us_vial_keycode16 = KC_NO;
+#endif
+
 #ifdef CONSOLE_ENABLE
 static uint32_t eeconfig_init_ver = 0;
 static uint32_t post_init_ver = 0;
