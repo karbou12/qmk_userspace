@@ -6,6 +6,10 @@
 #include "us_utils.h"
 #include "us_status.h"
 
+#ifdef USE_UINT16_KEYCODE_FOR_VIAL
+extern uint16_t g_us_vial_keycode16;
+#endif
+
 #ifdef RGBLIGHT_LAYERS
 static bool us_is_keyboard_post_init_user_called = false;
 static bool us_is_key_pressed_to_skip_rec_rgb = false;
@@ -81,6 +85,32 @@ static void us_record_rgblight_on_layer_of(const us_user_config_field_e field) {
 }
 
 // user key's func
+#ifdef USE_UINT16_KEYCODE_FOR_VIAL
+static void us_update_hue(const bool is_increase) {
+    if (is_increase) {
+        rgblight_increase_hue();
+    } else {
+        rgblight_decrease_hue();
+    }
+}
+
+static void us_update_sat(const bool is_increase) {
+    if (is_increase) {
+        rgblight_increase_sat();
+    } else {
+        rgblight_decrease_sat();
+    }
+}
+
+static void us_update_val(const bool is_increase) {
+    if (is_increase) {
+        rgblight_increase_val();
+    } else {
+        rgblight_decrease_val();
+    }
+}
+#endif
+
 static void us_update_hue_noeeprom(const bool is_increase) {
     if (is_increase) {
         rgblight_increase_hue_noeeprom();
@@ -246,6 +276,84 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
 
 bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mod_state = get_mods();
+
+#ifdef USE_UINT16_KEYCODE_FOR_VIAL
+    if (g_us_vial_keycode16 != KC_NO) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s: keycode:%x g_keycode:%x\n", __FUNCTION__, keycode, g_us_vial_keycode16);
+#endif
+        if (record->event.type == ENCODER_CW_EVENT || record->event.type == ENCODER_CCW_EVENT) {
+            if (IS_QK_LIGHTING(g_us_vial_keycode16)) {
+                switch (g_us_vial_keycode16) {
+                    case UG_HUEU:
+                        us_update_hue(!(mod_state & MOD_MASK_SHIFT));
+                        break;
+                    case UG_HUED:
+                        us_update_hue(mod_state & MOD_MASK_SHIFT);
+                        break;
+
+                    case UG_SATU:
+                        us_update_sat(!(mod_state & MOD_MASK_SHIFT));
+                        break;
+
+                    case UG_SATD:
+                        us_update_sat(mod_state & MOD_MASK_SHIFT);
+                        break;
+
+                    case UG_VALU:
+                        us_update_val(!(mod_state & MOD_MASK_SHIFT));
+                        break;
+
+                    case UG_VALD:
+                        us_update_val(mod_state & MOD_MASK_SHIFT);
+                        break;
+
+                    default:
+                        break;
+                }
+                if (rgblight_is_enabled()) {
+                    us_record_rgblight_on_layer_of(US_FIELD_LAYER0);
+                    us_is_key_pressed_to_skip_rec_rgb = true;
+                }
+                return true;
+            } else if (IS_QK_KB(g_us_vial_keycode16) || IS_QK_USER(g_us_vial_keycode16)) {
+                keycode = g_us_vial_keycode16;
+                if (us_is_rgblight_per_layer_enabled(NULL)) {
+                    switch(g_us_vial_keycode16) {
+                        case USR_RGB_LAYER_HUE_UP:
+                            us_update_hue_noeeprom(!(mod_state & MOD_MASK_SHIFT));
+                            break;
+                        case USR_RGB_LAYER_HUE_DOWN:
+                            us_update_hue_noeeprom(mod_state & MOD_MASK_SHIFT);
+                            break;
+                        case USR_RGB_LAYER_SAT_UP:
+                            us_update_sat_noeeprom(!(mod_state & MOD_MASK_SHIFT));
+                            break;
+                        case USR_RGB_LAYER_SAT_DOWN:
+                            us_update_sat_noeeprom(mod_state & MOD_MASK_SHIFT);
+                            break;
+                        case USR_RGB_LAYER_VAL_UP:
+                            us_update_val_noeeprom(!(mod_state & MOD_MASK_SHIFT));
+                            break;
+                        case USR_RGB_LAYER_VAL_DOWN:
+                            us_update_val_noeeprom(mod_state & MOD_MASK_SHIFT);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (us_is_rgblight_per_layer_enabled(NULL)) {
+                    us_record_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
+                    us_is_key_pressed_to_skip_rec_rgb = true;
+                }
+                return true;
+            }
+        } else {
+            g_us_vial_keycode16 = KC_NO;
+        }
+    }
+#endif
+
     switch (keycode) {
         case QK_DEF_LAYER ... QK_DEF_LAYER_MAX:
         case QK_PERSISTENT_DEF_LAYER ... QK_PERSISTENT_DEF_LAYER_MAX:
