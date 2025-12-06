@@ -6,9 +6,9 @@
 #define US_FW_VER_MINOR_OFFSET 4
 
 #define US_CONCAT_VER(M, m, p) ((M << US_FW_VER_MAJOR_OFFSET) | (m << US_FW_VER_MINOR_OFFSET) | p)
-#define FVS(x) US_FW_VER_ ## x
+#define FUVS(x) US_FW_USER_VER_ ## x
 
-#define US_FW_VER_MAJOR 1
-#define US_FW_VER_MINOR 0
-#define US_FW_VER_PATCH 0
+#define US_FW_USER_VER_MAJOR 1
+#define US_FW_USER_VER_MINOR 0
+#define US_FW_USER_VER_PATCH 0
 
