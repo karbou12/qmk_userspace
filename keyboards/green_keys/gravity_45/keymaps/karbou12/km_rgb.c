@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "quantum.h"
 
+#ifdef RGBLIGHT_LAYERS
 const rgblight_segment_t PROGMEM km_layer0_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_TURQUOISE});
 const rgblight_segment_t PROGMEM km_layer1_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_CYAN});
 const rgblight_segment_t PROGMEM km_layer2_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_MAGENTA});
@@ -14,6 +15,7 @@ const rgblight_segment_t PROGMEM km_layer8_layer[]   = RGBLIGHT_LAYER_SEGMENTS({
 const rgblight_segment_t PROGMEM km_capsword_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_RED});
 const rgblight_segment_t PROGMEM km_layerOFF_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_OFF});
 
+#ifdef RGBLIGHT_LAYER_BLINK
 const rgblight_segment_t PROGMEM km_reset_layer[] =       RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_WHITE});
 const rgblight_segment_t PROGMEM km_turn_on_layer[] =     RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_GOLD});
 const rgblight_segment_t PROGMEM km_turn_off_layer[] =    RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_RED});
@@ -25,6 +27,7 @@ const rgblight_segment_t * const PROGMEM km_blink_layers[] = RGBLIGHT_LAYERS_LIS
     km_turn_off_layer,
     km_set_default_layer
 );
+#endif
 
 const rgblight_segment_t * const PROGMEM km_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     km_layer0_layer,
@@ -38,3 +41,4 @@ const rgblight_segment_t * const PROGMEM km_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     km_layer8_layer,
     km_capsword_layer
 );
+#endif
