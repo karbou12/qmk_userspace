@@ -6,12 +6,14 @@
 
 #ifdef RGBLIGHT_LAYERS
 extern const rgblight_segment_t km_capsword_layer[];
+extern const rgblight_segment_t * const km_rgb_layers[];
+
+#ifdef RGBLIGHT_LAYER_BLINK
 extern const rgblight_segment_t km_reset_layer[];
 extern const rgblight_segment_t km_turn_on_layer[];
 extern const rgblight_segment_t km_turn_off_layer[];
 extern const rgblight_segment_t km_set_default_layer[];
 extern const rgblight_segment_t * const km_blink_layers[];
-extern const rgblight_segment_t * const km_rgb_layers[];
 
 typedef enum {
     US_BLINK_RESET = 0,
@@ -19,6 +21,7 @@ typedef enum {
     US_BLINK_OFF,
     US_BLINK_DF
 } us_blink_layer_e;
+#endif
 
 extern void US_RGB_eeconfig_init_mem(void);
 extern void US_RGB_eeconfig_migrate_mem(const us_user_config_u* bk, const uint32_t prev_ver);
