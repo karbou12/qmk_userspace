@@ -20,7 +20,7 @@
     },
     "diode_direction": "COL2ROW",
     "dynamic_keymap": {
-        "layer_count": 6
+        "layer_count": 8
     },
     "processor": "RP2040",
     "bootloader": "rp2040",

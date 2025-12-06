@@ -1,8 +1,11 @@
 {
     "name": "Cornelius",
-    "vendorId": "0x4653",
-    "productId": "0x0006",
+    "manufactor": "foostan",
     "matrix": {"rows": 4, "cols": 12},
+    "customKeycodes": [
+      {"name": "USR_RESET", "title": "Reset settings for RGB per layer and default layer per OS", "shortName": "User\nReset"},
+      {"name": "USR_OS_DEFAULT_LAYER", "title": "Set the current layer as the default layer of the current OS", "shortName": "Set\nOSDF"}
+    ],
     "layouts": {
         "keymap": [
             [{"r": 10, "rx": 1.5, "x": 2.5}, "0,3"],
