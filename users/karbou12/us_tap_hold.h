@@ -3,4 +3,6 @@
 #pragma once
 #include "karbou12.h"
 
+#ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 extern bool US_TH_get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record);
+#endif
