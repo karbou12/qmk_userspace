@@ -13,10 +13,13 @@ uint16_t g_us_vial_keycode16 = KC_NO;
 #endif
 
 #ifdef CONSOLE_ENABLE
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 static uint32_t eeconfig_init_ver = 0;
 static uint32_t post_init_ver = 0;
 #endif
+#endif
 
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 void eeconfig_init_user_datablock(void) {
 #ifdef CONSOLE_ENABLE
     eeconfig_init_ver = eeprom_read_dword(EECONFIG_USER);
@@ -39,19 +42,24 @@ void eeconfig_init_user_datablock(void) {
     // store global memory into eeprom user datablock
     US_EECONFIG_eeconfig_init_user_datablock();
 }
+#endif
 
 void keyboard_post_init_user(void) {
 #ifdef CONSOLE_ENABLE
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
     post_init_ver = eeprom_read_dword(EECONFIG_USER);
+#endif
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
             __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", post_init_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
 #endif
 
     US_DUMP_EECONFIG();
 
-#if (EECONFIG_USER_DATA_VERSION) > 0
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
     if (!eeconfig_is_user_datablock_valid()) {
         if (!US_EECONFIG_migrate_user_datablock()) {
             eeconfig_init_user_datablock();
@@ -79,6 +87,7 @@ void keyboard_post_init_user(void) {
 #endif
 }
 
+#ifdef OS_DETECTION_ENABLE
 bool process_detected_host_os_user(os_variant_t detected_os) {
 #ifdef CONSOLE_ENABLE
     uprintf("============================================================\n");
@@ -90,14 +99,13 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
 
     US_DUMP_EECONFIG();
 
-#ifdef OS_DETECTION_ENABLE
     if (!US_OS_process_detected_host_os_user(detected_os)) {
         return false;
     }
-#endif
 
     return true;
 }
+#endif
 
 layer_state_t default_layer_state_set_user(layer_state_t state) {
 #ifdef RGBLIGHT_LAYERS
@@ -138,11 +146,13 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
 }
 
+#ifdef CAPS_WORD_ENABLE
 void caps_word_set_user(bool active) {
 #ifdef RGBLIGHT_LAYERS
     US_RGB_caps_word_set_user(active);
 #endif
 }
+#endif
 
 #ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {

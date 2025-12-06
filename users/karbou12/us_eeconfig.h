@@ -29,6 +29,7 @@ typedef enum {
     US_FIELD_ALL
 } us_user_config_field_e;
 
+#ifdef RGBLIGHT_LAYERS
 typedef struct PACKED {
     hsv_t hsv;
     uint8_t mode;
@@ -52,22 +53,33 @@ typedef struct PACKED {
         } flags;
     };
 } us_rgb_config_t_v2;
+#endif
 
+#ifdef OS_DETECTION_ENABLE
 typedef struct PACKED {
     us_user_config_field_e os_default_layer[OS_IOS + 1];
 } us_os_config_t_v1;
 
 #define us_os_config_t_v2 us_os_config_t_v1
+#endif
 
 typedef struct PACKED {
+#ifdef RGBLIGHT_LAYERS
     us_rgb_config_t_v1 rgb;
+#endif
+#ifdef OS_DETECTION_ENABLE
     us_os_config_t_v1 os;
+#endif
 } us_user_config_t_v1;
 #define US_BASE_FW_VER_OF_USER_CONFIG_V1 US_CONCAT_VER(0, 0, 5)
 
-typedef struct {
+typedef struct PACKED {
+#ifdef RGBLIGHT_LAYERS
     us_rgb_config_t_v2 rgb;
+#endif
+#ifdef OS_DETECTION_ENABLE
     us_os_config_t_v2 os;
+#endif
 } us_user_config_t_v2;
 #define US_BASE_FW_VER_OF_USER_CONFIG_V2 US_CONCAT_VER(1, 0, 0)
 
@@ -90,6 +102,7 @@ extern void us_dump_eeconfig(const char* const func);
 #define US_DUMP_EECONFIG()
 #endif
 
+#ifdef RGBLIGHT_LAYERS
 extern const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field);
 extern void US_EECONFIG_update_hsvm_layer_to_eeprom(const us_user_config_field_e field, const us_hsvm_t* hsvm_layer);
 
@@ -101,13 +114,19 @@ extern void US_EECONFIG_update_auto_save_rgb_to_eeprom(const bool is_rgb_per_lay
 
 extern bool US_EECONFIG_get_retain_val_from_mem(void);
 extern void US_EECONFIG_update_retain_val_to_eeprom(const bool to_retain_val);
+#endif
 
+#ifdef OS_DETECTION_ENABLE
 extern us_user_config_field_e US_EECONFIG_get_os_default_layer_from_mem(void);
 extern void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e field);
+#endif
 
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 extern bool US_EECONFIG_migrate_user_datablock(void);
 
 // override func
 extern void US_EECONFIG_eeconfig_init_user_datablock(void);
+#endif
+
 extern void US_EECONFIG_keyboard_post_init_user(void);
 extern bool US_EECONFIG_process_record_user(uint16_t keycode, keyrecord_t *record);

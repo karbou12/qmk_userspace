@@ -51,9 +51,10 @@ bool US_OS_process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case USR_OS_DEFAULT_LAYER:
             if (record->event.pressed) {
+#ifdef RGBLIGHT_LAYER_BLINK
                 rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(US_BLINK_DF, 200, 3);
-
+#endif
                 const us_user_config_field_e cur_layer = US_UTIL_get_current_layer(layer_state);
                 US_EECONFIG_update_os_default_layer_to_eeprom(cur_layer);
 
