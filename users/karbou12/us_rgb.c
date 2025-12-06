@@ -6,18 +6,21 @@
 #include "us_utils.h"
 #include "us_status.h"
 
+#ifdef RGBLIGHT_LAYERS
+
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
 extern uint16_t g_us_vial_keycode16;
 #endif
 
-#ifdef RGBLIGHT_LAYERS
 static bool us_is_keyboard_post_init_user_called = false;
 static bool us_is_key_pressed_to_skip_rec_rgb = false;
 
+#ifdef RGBLIGHT_LAYER_BLINK
 static rgblight_segment_t PROGMEM df_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 1, HSV_TURQUOISE});
 static const rgblight_segment_t * const PROGMEM df_blink_layers[] = RGBLIGHT_LAYERS_LIST(
     df_layer
 );
+#endif
 
 static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
     if (!us_is_keyboard_post_init_user_called) {
@@ -26,9 +29,11 @@ static void us_set_rgblight_on_layer_of(const us_user_config_field_e field) {
 
     us_is_key_pressed_to_skip_rec_rgb = false;
 
+#ifdef CAPS_WORD_ENABLE
     if (is_caps_word_on()) {
         return;
     }
+#endif
 
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
@@ -59,9 +64,11 @@ static void us_record_rgblight_on_layer_of(const us_user_config_field_e field) {
         return;
     }
 
+#ifdef CAPS_WORD_ENABLE
     if (is_caps_word_on()) {
         return;
     }
+#endif
 
     US_DUMP_EECONFIG();
     us_hsvm_t cur_hsvm = {.hsv.h = rgblight_get_hue(), .hsv.s = rgblight_get_sat(),
@@ -146,10 +153,10 @@ static bool us_is_rgblight_per_layer_enabled(keyrecord_t *record) {
 void US_RGB_eeconfig_init_mem(void) {
     us_hsvm_t* p = us_user_config.rgb.hsvm_layer;
     for (uint8_t i = 0; i < ARRAY_SIZE(us_user_config.rgb.hsvm_layer); i++, p++) {
-        const rgblight_segment_t* const cur_seg = km_rgb_layers[i];
-        p->hsv.h = cur_seg->hue;
-        p->hsv.s = cur_seg->sat;
-        p->hsv.v = cur_seg->val;
+        const hsv_t* const cur_seg = km_hsv_layers[i];
+        p->hsv.h = cur_seg->h;
+        p->hsv.s = cur_seg->s;
+        p->hsv.v = cur_seg->v;
         p->mode = RGBLIGHT_MODE_STATIC_LIGHT;
     }
 
@@ -189,7 +196,9 @@ void US_RGB_eeconfig_migrate_mem(const us_user_config_u* bk, const uint32_t prev
 
 void US_RGB_keyboard_post_init_user(void) {
     us_is_keyboard_post_init_user_called = true;
+#ifdef RGBLIGHT_LAYERS_BLINK
     rgblight_layers = km_blink_layers;
+#endif
 
     rgblight_enable_noeeprom();
     us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
@@ -220,6 +229,7 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
     if (US_STATUS_can_set_rgblight()) {
         const us_user_config_field_e field = get_highest_layer(state);
         if (!US_STATUS_can_record_rgblight() && get_highest_layer(layer_state) != 0) {
+#ifdef RGBLIGHT_LAYER_BLINK
             const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
 
             if (p) {
@@ -234,6 +244,7 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
             }
             rgblight_layers = df_blink_layers;
             rgblight_blink_layer_repeat(0, 300, 1);
+#endif
             us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
         } else {
             us_set_rgblight_on_layer_of(field);
@@ -248,9 +259,11 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
         return state;
     }
 
+#ifdef CAPS_WORD_ENABLE
     if (is_caps_word_on()) {
         return state;
     }
+#endif
 
     if (!US_EECONFIG_get_rgb_per_layer_from_mem()) {
         us_set_rgblight_on_layer_of(US_FIELD_LAYER0);
@@ -379,8 +392,10 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case USR_RGB_RETAIN_VAL_TOG:
             if (us_is_rgblight_per_layer_enabled(record)) {
                 const bool cur_flag = US_EECONFIG_get_retain_val_from_mem();
+#ifdef RGBLIGHT_LAYER_BLINK
                 rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(cur_flag ? US_BLINK_OFF : US_BLINK_ON, 300, 2);
+#endif
                 US_EECONFIG_update_retain_val_to_eeprom(!cur_flag);
                 us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
                 if (US_UTIL_get_current_layer(layer_state) != US_FIELD_LAYER0) {
@@ -392,8 +407,10 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case USR_RGB_LAYER_TOG:
             if (rgblight_is_enabled() && record->event.pressed) {
                 const bool cur_flag = US_EECONFIG_get_rgb_per_layer_from_mem();
+#ifdef RGBLIGHT_LAYER_BLINK
                 rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(cur_flag ? US_BLINK_OFF : US_BLINK_ON, 300, 2);
+#endif
                 const bool next_flag = !cur_flag;
                 US_EECONFIG_update_rgb_per_layer_to_eeprom(next_flag);
                 if (next_flag) {
@@ -446,8 +463,10 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case USR_RGB_AUTO_SAVE_TOG:
             if (us_is_rgblight_per_layer_enabled(record)) {
                 const bool cur_flag = US_EECONFIG_get_auto_save_rgb_from_mem();
+#ifdef RGBLIGHT_LAYER_BLINK
                 rgblight_layers = km_blink_layers;
                 rgblight_blink_layer_repeat(cur_flag ? US_BLINK_OFF : US_BLINK_ON, 300, 2);
+#endif
                 US_EECONFIG_update_auto_save_rgb_to_eeprom(!cur_flag);
             }
             return false;
@@ -492,19 +511,20 @@ void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+#ifdef CAPS_WORD_ENABLE
 void US_RGB_caps_word_set_user(bool active) {
     if (!US_EECONFIG_get_rgb_per_layer_from_mem()) {
         return;
     }
 
     if (active) {
-        const rgblight_segment_t* const cur_seg = km_capsword_layer;
+        const hsv_t* const cur_seg = km_hsv_capsword;
 #ifdef CONSOLE_ENABLE
         uprintf("============================================================\n");
         uprintf("%s, active def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #endif
 
-        rgblight_sethsv_noeeprom(cur_seg->hue, cur_seg->sat, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v);
+        rgblight_sethsv_noeeprom(cur_seg->h, cur_seg->s, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v);
         rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
     } else {
 #ifdef CONSOLE_ENABLE
@@ -513,4 +533,5 @@ void US_RGB_caps_word_set_user(bool active) {
         us_set_rgblight_on_layer_of(US_UTIL_get_current_layer(layer_state));
     }
 }
+#endif
 #endif
