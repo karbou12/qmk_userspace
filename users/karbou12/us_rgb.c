@@ -153,10 +153,10 @@ static bool us_is_rgblight_per_layer_enabled(keyrecord_t *record) {
 void US_RGB_eeconfig_init_mem(void) {
     us_hsvm_t* p = us_user_config.rgb.hsvm_layer;
     for (uint8_t i = 0; i < ARRAY_SIZE(us_user_config.rgb.hsvm_layer); i++, p++) {
-        const rgblight_segment_t* const cur_seg = km_rgb_layers[i];
-        p->hsv.h = cur_seg->hue;
-        p->hsv.s = cur_seg->sat;
-        p->hsv.v = cur_seg->val;
+        const hsv_t* const cur_seg = km_hsv_layers[i];
+        p->hsv.h = cur_seg->h;
+        p->hsv.s = cur_seg->s;
+        p->hsv.v = cur_seg->v;
         p->mode = RGBLIGHT_MODE_STATIC_LIGHT;
     }
 
@@ -518,13 +518,13 @@ void US_RGB_caps_word_set_user(bool active) {
     }
 
     if (active) {
-        const rgblight_segment_t* const cur_seg = km_capsword_layer;
+        const hsv_t* const cur_seg = km_hsv_capsword;
 #ifdef CONSOLE_ENABLE
         uprintf("============================================================\n");
         uprintf("%s, active def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #endif
 
-        rgblight_sethsv_noeeprom(cur_seg->hue, cur_seg->sat, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v);
+        rgblight_sethsv_noeeprom(cur_seg->h, cur_seg->s, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v);
         rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
     } else {
 #ifdef CONSOLE_ENABLE
