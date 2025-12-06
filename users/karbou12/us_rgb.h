@@ -4,9 +4,15 @@
 #include "karbou12.h"
 #include "us_eeconfig.h"
 
+#define HSV_LAYER_END_SEGMENTS {0, 0, 0}
+#define HSV_LAYER_SEGMENTS(...) \
+        { __VA_ARGS__, HSV_LAYER_END_SEGMENTS }
+#define HSV_LAYERS_LIST(...) \
+        { __VA_ARGS__, NULL }
+
 #ifdef RGBLIGHT_LAYERS
-extern const rgblight_segment_t km_capsword_layer[];
-extern const rgblight_segment_t * const km_rgb_layers[];
+extern const hsv_t km_hsv_capsword[];
+extern const hsv_t * const km_hsv_layers[];
 
 #ifdef RGBLIGHT_LAYER_BLINK
 extern const rgblight_segment_t km_reset_layer[];
