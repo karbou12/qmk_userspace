@@ -1,33 +1,34 @@
 // Copyright 2025 Tano Karbou (github: karbou12 / X: @karbou_12)
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "quantum.h"
+#include "us_rgb.h"
 
 #ifdef RGBLIGHT_LAYERS
-const rgblight_segment_t PROGMEM km_layer0_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_YELLOW});
-const rgblight_segment_t PROGMEM km_layer1_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_GREEN});
-const rgblight_segment_t PROGMEM km_layer2_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_CYAN});
-const rgblight_segment_t PROGMEM km_layer3_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_ORANGE});
-const rgblight_segment_t PROGMEM km_layer4_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_SPRINGGREEN});
-const rgblight_segment_t PROGMEM km_layer5_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_GREEN});
-const rgblight_segment_t PROGMEM km_layer6_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_CHARTREUSE});
-const rgblight_segment_t PROGMEM km_layer7_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_ORANGE});
-const rgblight_segment_t PROGMEM km_layer8_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_PURPLE});
-const rgblight_segment_t PROGMEM km_layer9_layer[]   = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_MAGENTA});
-const rgblight_segment_t PROGMEM km_capsword_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_RED});
-const rgblight_segment_t PROGMEM km_layerOFF_layer[] = RGBLIGHT_LAYER_SEGMENTS({0, 6, HSV_OFF});
+const hsv_t PROGMEM km_hsv_layer0[]   = HSV_LAYER_SEGMENTS({HSV_YELLOW});
+const hsv_t PROGMEM km_hsv_layer1[]   = HSV_LAYER_SEGMENTS({HSV_GREEN});
+const hsv_t PROGMEM km_hsv_layer2[]   = HSV_LAYER_SEGMENTS({HSV_CYAN});
+const hsv_t PROGMEM km_hsv_layer3[]   = HSV_LAYER_SEGMENTS({HSV_ORANGE});
+const hsv_t PROGMEM km_hsv_layer4[]   = HSV_LAYER_SEGMENTS({HSV_SPRINGGREEN});
+const hsv_t PROGMEM km_hsv_layer5[]   = HSV_LAYER_SEGMENTS({HSV_GREEN});
+const hsv_t PROGMEM km_hsv_layer6[]   = HSV_LAYER_SEGMENTS({HSV_CHARTREUSE});
+const hsv_t PROGMEM km_hsv_layer7[]   = HSV_LAYER_SEGMENTS({HSV_ORANGE});
+const hsv_t PROGMEM km_hsv_layer8[]   = HSV_LAYER_SEGMENTS({HSV_PURPLE});
+const hsv_t PROGMEM km_hsv_layer9[]   = HSV_LAYER_SEGMENTS({HSV_MAGENTA});
+const hsv_t PROGMEM km_hsv_capsword[] = HSV_LAYER_SEGMENTS({HSV_RED});
+const hsv_t PROGMEM km_hsv_OFF[]      = HSV_LAYER_SEGMENTS({HSV_OFF});
 
-const rgblight_segment_t * const PROGMEM km_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
-    km_layer0_layer,
-    km_layer1_layer,
-    km_layer2_layer,
-    km_layer3_layer,
-    km_layer4_layer,
-    km_layer5_layer,
-    km_layer6_layer,
-    km_layer7_layer,
-    km_layer8_layer,
-    km_layer9_layer,
-    km_capsword_layer
+const hsv_t * const PROGMEM km_hsv_layers[] = HSV_LAYERS_LIST(
+    km_hsv_layer0,
+    km_hsv_layer1,
+    km_hsv_layer2,
+    km_hsv_layer3,
+    km_hsv_layer4,
+    km_hsv_layer5,
+    km_hsv_layer6,
+    km_hsv_layer7,
+    km_hsv_layer8,
+    km_hsv_layer9,
+    km_hsv_capsword
 );
 
 #ifdef RGBLIGHT_LAYER_BLINK
