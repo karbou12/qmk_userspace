@@ -3,4 +3,6 @@
 #pragma once
 #include "karbou12.h"
 
+#ifdef CUSTOM_KEY_OVERRIDE_ENABLE
 extern void US_KO_keyboard_post_init_user(void);
+#endif

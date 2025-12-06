@@ -4,11 +4,8 @@
 #include "karbou12.h"
 
 enum custom_keycodes {
-#ifdef VIAL_ENABLE
     USR_RESET = QK_KB_0,
-#else
-    USR_RESET = SAFE_RANGE,
-#endif
+#ifdef RGBLIGHT_LAYERS
     USR_RGB_LAYER_TOG,
     USR_RGB_RETAIN_VAL_TOG,
     USR_RGB_LAYER_HUE_UP,
@@ -18,6 +15,9 @@ enum custom_keycodes {
     USR_RGB_LAYER_VAL_UP,
     USR_RGB_LAYER_VAL_DOWN,
     USR_RGB_AUTO_SAVE_TOG,
+#endif
+#ifdef OS_DETECTION_ENABLE
     USR_OS_DEFAULT_LAYER,
+#endif
     NEW_USR_SAFE_RANGE,
 };
