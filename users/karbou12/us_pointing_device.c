@@ -45,12 +45,12 @@
 #endif
 
 cocot_config_t cocot_config;
-uint16_t cpi_array[] = COCOT_CPI_OPTIONS;
-uint16_t scrl_div_array[] = COCOT_SCROLL_DIVIDERS;
-uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
-#define CPI_OPTION_SIZE (sizeof(cpi_array) / sizeof(uint16_t))
-#define SCRL_DIV_SIZE (sizeof(scrl_div_array) / sizeof(uint16_t))
-#define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
+const static uint16_t cpi_array[] = COCOT_CPI_OPTIONS;
+const static uint16_t scrl_div_array[] = COCOT_SCROLL_DIVIDERS;
+const static uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
+const static uint8_t CPI_OPTION_SIZE = ARRAY_SIZE(cpi_array);
+const static uint8_t SCRL_DIV_SIZE = ARRAY_SIZE(scrl_div_array);
+const static uint8_t ANGLE_SIZE = ARRAY_SIZE(angle_array);
 
 static bool us_is_scrl_mode = false;
 
