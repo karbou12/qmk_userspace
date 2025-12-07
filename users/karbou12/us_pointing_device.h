@@ -30,4 +30,5 @@ extern bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record);
 extern layer_state_t US_PD_layer_state_set_kb(layer_state_t state);
 extern void US_PD_eeconfig_init_kb(void);
 extern void US_PD_matrix_init_kb(void);
+extern bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
 #endif
