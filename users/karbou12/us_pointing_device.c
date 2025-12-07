@@ -126,60 +126,70 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
     // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
 
     switch (keycode) {
-        #ifndef MOUSEKEY_ENABLE
-                // process KC_MS_BTN1~8 by myself
-                // See process_action() in quantum/action.c for details.
-                case KC_MS_BTN1 ... KC_MS_BTN8: {
-                    extern void register_button(bool, enum mouse_buttons);
-                    register_button(record->event.pressed, MOUSE_BTN_MASK(keycode - KC_MS_BTN1));
-                    return false;
-                }
-        #endif
-        //*
+#ifndef MOUSEKEY_ENABLE
+        // process KC_MS_BTN1~8 by myself
+        // See process_action() in quantum/action.c for details.
+        case KC_MS_BTN1 ... KC_MS_BTN8: {
+            extern void register_button(bool, enum mouse_buttons);
+            register_button(record->event.pressed, MOUSE_BTN_MASK(keycode - KC_MS_BTN1));
+            return false;
+        }
+#endif
+        case CPI_SW:
+            if (record->event.pressed) {
+                cocot_config.cpi_idx = (cocot_config.cpi_idx + 1) % CPI_OPTION_SIZE;
+                eeconfig_update_kb(cocot_config.raw);
+                pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
+            }
+            break;
+
+        case SCRL_SW:
+            if (record->event.pressed) {
+                cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
+                eeconfig_update_kb(cocot_config.raw);
+            }
+            break;
+
+        case ROT_R15:
+            if (record->event.pressed) {
+                cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
+                eeconfig_update_kb(cocot_config.raw);
+            }
+            break;
+
+        case ROT_L15:
+            if (record->event.pressed) {
+                cocot_config.rotation_angle = (ANGLE_SIZE + cocot_config.rotation_angle - 1) % ANGLE_SIZE;
+                eeconfig_update_kb(cocot_config.raw);
+            }
+            break;
+
+        case SCRL_IN:
+            if (record->event.pressed) {
+                cocot_config.scrl_inv ^= 1;
+                eeconfig_update_kb(cocot_config.raw);
+            }
+            break;
+
+        case SCRL_TO:
+            if (record->event.pressed) {
+                cocot_config.scrl_mode ^= 1;
+            }
+            break;
+
+        case SCRL_MO:
+            if (keycode == SCRL_MO) {
+                cocot_config.scrl_mode ^= 1;
+            }
+            break;
+
         case AM_TOG:
-            if(record->event.pressed) { // key down
-                //auto_mouse_layer_off(); // disable target layer if needed
+            if(record->event.pressed) {
                 cocot_config.auto_mouse ^= 1;
                 eeconfig_update_kb(cocot_config.raw);
                 set_auto_mouse_enable(cocot_config.auto_mouse);
-                //auto_mouse_tg_off = !get_auto_mouse_enable();
-            } // do nothing on key up
-            return false; // prevent further processing of keycode
-    //*/
-    }
-
-    if (keycode == CPI_SW && record->event.pressed) {
-        cocot_config.cpi_idx = (cocot_config.cpi_idx + 1) % CPI_OPTION_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-        pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
-    }
-
-    if (keycode == SCRL_SW && record->event.pressed) {
-        cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == ROT_R15 && record->event.pressed) {
-        cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == ROT_L15 && record->event.pressed) {
-        cocot_config.rotation_angle = (ANGLE_SIZE + cocot_config.rotation_angle - 1) % ANGLE_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == SCRL_IN && record->event.pressed) {
-        cocot_config.scrl_inv ^= 1;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == SCRL_TO && record->event.pressed) {
-        { cocot_config.scrl_mode ^= 1; }
-    }
-
-    if (keycode == SCRL_MO) {
-        { cocot_config.scrl_mode ^= 1; }
+            }
+            return false;
     }
 
     return true;
