@@ -54,6 +54,13 @@ void matrix_init_kb(void) {
     US_PD_matrix_init_kb();
     matrix_init_user();
 }
+
+bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
+    if (!US_PD_is_mouse_record_kb(keycode, record)) {
+        return false;
+    }
+    return is_mouse_record_user(keycode, record);
+}
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0

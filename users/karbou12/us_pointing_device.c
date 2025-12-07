@@ -281,7 +281,7 @@ void cocot_set_scroll_mode(bool mode) {
     cocot_config.scrl_mode = mode;
 }
 
-bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
+bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
       case KC_LCTL:
         return true;
@@ -292,5 +292,4 @@ bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
       default:
         return false;
     }
-    return is_mouse_record_user(keycode, record);
 }

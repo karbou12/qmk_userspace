@@ -10,6 +10,7 @@ extern bool process_record_kb(uint16_t keycode, keyrecord_t* record);
 extern layer_state_t layer_state_set_kb(layer_state_t state);
 extern void eeconfig_init_kb(void);
 extern void matrix_init_kb(void);
+extern bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
