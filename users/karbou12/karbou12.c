@@ -21,14 +21,24 @@ static uint32_t post_init_ver = 0;
 #endif
 
 #ifdef POINTING_DEVICE_ENABLE
+void matrix_init_kb(void) {
+    US_PD_matrix_init_kb();
+    matrix_init_user();
+}
+
+void eeconfig_init_kb(void) {
+    US_PD_eeconfig_init_kb();
+    eeconfig_init_user();
+}
+
 void pointing_device_init_kb(void) {
     US_PD_pointing_device_init_kb();
     // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
 }
 
-report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
-    const report_mouse_t ret_mouse_report = US_PD_pointing_device_task_kb(mouse_report);
-    return pointing_device_task_user(ret_mouse_report);
+layer_state_t layer_state_set_kb(layer_state_t state) {
+    const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
+    return layer_state_set_user(ret_state);
 }
 
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
@@ -40,19 +50,9 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-layer_state_t layer_state_set_kb(layer_state_t state) {
-    const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
-    return layer_state_set_user(ret_state);
-}
-
-void eeconfig_init_kb(void) {
-    US_PD_eeconfig_init_kb();
-    eeconfig_init_user();
-}
-
-void matrix_init_kb(void) {
-    US_PD_matrix_init_kb();
-    matrix_init_user();
+report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+    const report_mouse_t ret_mouse_report = US_PD_pointing_device_task_kb(mouse_report);
+    return pointing_device_task_user(ret_mouse_report);
 }
 
 bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {

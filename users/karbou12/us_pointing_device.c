@@ -52,6 +52,34 @@ uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
 #define SCRL_DIV_SIZE (sizeof(scrl_div_array) / sizeof(uint16_t))
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
 
+static bool cocot_get_scroll_mode(void) {
+    return cocot_config.scrl_mode;
+}
+
+static void cocot_set_scroll_mode(bool mode) {
+    cocot_config.scrl_mode = mode;
+}
+
+void US_PD_matrix_init_kb(void) {
+    // is safe to just read CPI setting since matrix init
+    // comes before pointing device init.
+    cocot_config.raw = eeconfig_read_kb();
+    if (cocot_config.cpi_idx > CPI_OPTION_SIZE) // || cocot_config.scrl_div > SCRL_DIV_SIZE || cocot_config.rotation_angle > ANGLE_SIZE)
+    {
+        eeconfig_init_kb();
+    }
+}
+
+void US_PD_eeconfig_init_kb(void) {
+    cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
+    cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
+    cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
+    cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
+    cocot_config.scrl_mode = false;
+    cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
+    eeconfig_update_kb(cocot_config.raw);
+}
+
 void US_PD_pointing_device_init_kb(void) {
     // set the CPI.
     pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
@@ -59,6 +87,102 @@ void US_PD_pointing_device_init_kb(void) {
     eeconfig_update_kb(cocot_config.raw);
     //set_auto_mouse_layer(4);
     set_auto_mouse_enable(cocot_config.auto_mouse);
+}
+
+layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
+    switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
+        case 1 ... 2:
+            //rgblight_sethsv_range(HSV_YELLOW, 0, 9);
+            cocot_set_scroll_mode(true);
+            state = remove_auto_mouse_layer(state, false);
+            set_auto_mouse_enable(false);
+            break;
+        case 3 ... 7:
+            //rgblight_sethsv_range(HSV_CYAN, 0, 9);
+            cocot_set_scroll_mode(false);
+            //set_auto_mouse_enable(true);
+            break;
+        default:
+            //rgblight_sethsv_range(HSV_RED, 0, 9);
+            cocot_set_scroll_mode(false);
+
+            if (cocot_config.auto_mouse) {
+                set_auto_mouse_enable(true);
+            } else {
+                //state = remove_auto_mouse_layer(state, false);
+                set_auto_mouse_enable(false);
+            }
+
+            //set_auto_mouse_enable(true);
+            //state = remove_auto_mouse_layer(state, false);
+            //set_auto_mouse_enable(cocot_config.auto_mouse);
+            break;
+        }
+    //rgblight_set_effect_range( 9, 36);
+    return state;
+};
+
+bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
+    // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
+
+    switch (keycode) {
+        #ifndef MOUSEKEY_ENABLE
+                // process KC_MS_BTN1~8 by myself
+                // See process_action() in quantum/action.c for details.
+                case KC_MS_BTN1 ... KC_MS_BTN8: {
+                    extern void register_button(bool, enum mouse_buttons);
+                    register_button(record->event.pressed, MOUSE_BTN_MASK(keycode - KC_MS_BTN1));
+                    return false;
+                }
+        #endif
+        //*
+        case AM_TOG:
+            if(record->event.pressed) { // key down
+                //auto_mouse_layer_off(); // disable target layer if needed
+                cocot_config.auto_mouse ^= 1;
+                eeconfig_update_kb(cocot_config.raw);
+                set_auto_mouse_enable(cocot_config.auto_mouse);
+                //auto_mouse_tg_off = !get_auto_mouse_enable();
+            } // do nothing on key up
+            return false; // prevent further processing of keycode
+    //*/
+    }
+
+    if (keycode == CPI_SW && record->event.pressed) {
+        cocot_config.cpi_idx = (cocot_config.cpi_idx + 1) % CPI_OPTION_SIZE;
+        eeconfig_update_kb(cocot_config.raw);
+        pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
+    }
+
+    if (keycode == SCRL_SW && record->event.pressed) {
+        cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
+        eeconfig_update_kb(cocot_config.raw);
+    }
+
+    if (keycode == ROT_R15 && record->event.pressed) {
+        cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
+        eeconfig_update_kb(cocot_config.raw);
+    }
+
+    if (keycode == ROT_L15 && record->event.pressed) {
+        cocot_config.rotation_angle = (ANGLE_SIZE + cocot_config.rotation_angle - 1) % ANGLE_SIZE;
+        eeconfig_update_kb(cocot_config.raw);
+    }
+
+    if (keycode == SCRL_IN && record->event.pressed) {
+        cocot_config.scrl_inv ^= 1;
+        eeconfig_update_kb(cocot_config.raw);
+    }
+
+    if (keycode == SCRL_TO && record->event.pressed) {
+        { cocot_config.scrl_mode ^= 1; }
+    }
+
+    if (keycode == SCRL_MO) {
+        { cocot_config.scrl_mode ^= 1; }
+    }
+
+    return true;
 }
 
 report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
@@ -150,135 +274,6 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
     }
 
     return mouse_report;
-}
-
-bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
-    // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-
-    switch (keycode) {
-        #ifndef MOUSEKEY_ENABLE
-                // process KC_MS_BTN1~8 by myself
-                // See process_action() in quantum/action.c for details.
-                case KC_MS_BTN1 ... KC_MS_BTN8: {
-                    extern void register_button(bool, enum mouse_buttons);
-                    register_button(record->event.pressed, MOUSE_BTN_MASK(keycode - KC_MS_BTN1));
-                    return false;
-                }
-        #endif
-        //*
-        case AM_TOG:
-            if(record->event.pressed) { // key down
-                //auto_mouse_layer_off(); // disable target layer if needed
-                cocot_config.auto_mouse ^= 1;
-                eeconfig_update_kb(cocot_config.raw);
-                set_auto_mouse_enable(cocot_config.auto_mouse);
-                //auto_mouse_tg_off = !get_auto_mouse_enable();
-            } // do nothing on key up
-            return false; // prevent further processing of keycode
-    //*/
-    }
-
-    if (keycode == CPI_SW && record->event.pressed) {
-        cocot_config.cpi_idx = (cocot_config.cpi_idx + 1) % CPI_OPTION_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-        pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
-    }
-
-    if (keycode == SCRL_SW && record->event.pressed) {
-        cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == ROT_R15 && record->event.pressed) {
-        cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == ROT_L15 && record->event.pressed) {
-        cocot_config.rotation_angle = (ANGLE_SIZE + cocot_config.rotation_angle - 1) % ANGLE_SIZE;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == SCRL_IN && record->event.pressed) {
-        cocot_config.scrl_inv ^= 1;
-        eeconfig_update_kb(cocot_config.raw);
-    }
-
-    if (keycode == SCRL_TO && record->event.pressed) {
-        { cocot_config.scrl_mode ^= 1; }
-    }
-
-    if (keycode == SCRL_MO) {
-        { cocot_config.scrl_mode ^= 1; }
-    }
-
-    return true;
-}
-
-
-layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
-    switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
-        case 1 ... 2:
-            //rgblight_sethsv_range(HSV_YELLOW, 0, 9);
-            cocot_set_scroll_mode(true);
-            state = remove_auto_mouse_layer(state, false);
-            set_auto_mouse_enable(false);
-            break;
-        case 3 ... 7:
-            //rgblight_sethsv_range(HSV_CYAN, 0, 9);
-            cocot_set_scroll_mode(false);
-            //set_auto_mouse_enable(true);
-            break;
-        default:
-            //rgblight_sethsv_range(HSV_RED, 0, 9);
-            cocot_set_scroll_mode(false);
-
-            if (cocot_config.auto_mouse) {
-                set_auto_mouse_enable(true);
-            } else {
-                //state = remove_auto_mouse_layer(state, false);
-                set_auto_mouse_enable(false);
-            }
-
-            //set_auto_mouse_enable(true);
-            //state = remove_auto_mouse_layer(state, false);
-            //set_auto_mouse_enable(cocot_config.auto_mouse);
-            break;
-        }
-    //rgblight_set_effect_range( 9, 36);
-    return state;
-};
-
-
-
-void US_PD_eeconfig_init_kb(void) {
-    cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
-    cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
-    cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
-    cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
-    cocot_config.scrl_mode = false;
-    cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
-    eeconfig_update_kb(cocot_config.raw);
-}
-
-
-void US_PD_matrix_init_kb(void) {
-    // is safe to just read CPI setting since matrix init
-    // comes before pointing device init.
-    cocot_config.raw = eeconfig_read_kb();
-    if (cocot_config.cpi_idx > CPI_OPTION_SIZE) // || cocot_config.scrl_div > SCRL_DIV_SIZE || cocot_config.rotation_angle > ANGLE_SIZE)
-    {
-        eeconfig_init_kb();
-    }
-}
-
-
-bool cocot_get_scroll_mode(void) {
-    return cocot_config.scrl_mode;
-}
-
-void cocot_set_scroll_mode(bool mode) {
-    cocot_config.scrl_mode = mode;
 }
 
 bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {

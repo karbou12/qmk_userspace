@@ -4,12 +4,12 @@
 #include "quantum.h"
 
 #ifdef POINTING_DEVICE_ENABLE
-extern void pointing_device_init_kb(void);
-extern report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report);
-extern bool process_record_kb(uint16_t keycode, keyrecord_t* record);
-extern layer_state_t layer_state_set_kb(layer_state_t state);
-extern void eeconfig_init_kb(void);
 extern void matrix_init_kb(void);
+extern void eeconfig_init_kb(void);
+extern void pointing_device_init_kb(void);
+extern layer_state_t layer_state_set_kb(layer_state_t state);
+extern bool process_record_kb(uint16_t keycode, keyrecord_t* record);
+extern report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report);
 extern bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
 #endif
 

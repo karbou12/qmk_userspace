@@ -21,14 +21,11 @@ typedef union {
 
 extern cocot_config_t cocot_config;
 
-extern bool cocot_get_scroll_mode(void);
-extern void cocot_set_scroll_mode(bool mode);
-
-extern void US_PD_pointing_device_init_kb(void);
-extern report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report);
-extern bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record);
-extern layer_state_t US_PD_layer_state_set_kb(layer_state_t state);
-extern void US_PD_eeconfig_init_kb(void);
 extern void US_PD_matrix_init_kb(void);
+extern void US_PD_eeconfig_init_kb(void);
+extern void US_PD_pointing_device_init_kb(void);
+extern layer_state_t US_PD_layer_state_set_kb(layer_state_t state);
+extern bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record);
+extern report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report);
 extern bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
 #endif
