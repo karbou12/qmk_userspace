@@ -14,8 +14,6 @@ typedef union {
         uint8_t rotation_angle;
         bool auto_mouse: 1;
         bool scrl_inv: 1;
-        bool scrl_mode: 1;
-        // report_mouse_t last_mouse;
     };
 } cocot_config_t;
 

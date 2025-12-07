@@ -52,13 +52,7 @@ uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
 #define SCRL_DIV_SIZE (sizeof(scrl_div_array) / sizeof(uint16_t))
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
 
-static bool cocot_get_scroll_mode(void) {
-    return cocot_config.scrl_mode;
-}
-
-static void cocot_set_scroll_mode(bool mode) {
-    cocot_config.scrl_mode = mode;
-}
+static bool us_is_scrl_mode = false;
 
 void US_PD_matrix_init_kb(void) {
     // is safe to just read CPI setting since matrix init
@@ -75,7 +69,6 @@ void US_PD_eeconfig_init_kb(void) {
     cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
     cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
     cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
-    cocot_config.scrl_mode = false;
     cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
     eeconfig_update_kb(cocot_config.raw);
 }
@@ -93,18 +86,18 @@ layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
     switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
         case 1 ... 2:
             //rgblight_sethsv_range(HSV_YELLOW, 0, 9);
-            cocot_set_scroll_mode(true);
+            us_is_scrl_mode = true;
             state = remove_auto_mouse_layer(state, false);
             set_auto_mouse_enable(false);
             break;
         case 3 ... 7:
             //rgblight_sethsv_range(HSV_CYAN, 0, 9);
-            cocot_set_scroll_mode(false);
+            us_is_scrl_mode = false;
             //set_auto_mouse_enable(true);
             break;
         default:
             //rgblight_sethsv_range(HSV_RED, 0, 9);
-            cocot_set_scroll_mode(false);
+            us_is_scrl_mode = false;
 
             if (cocot_config.auto_mouse) {
                 set_auto_mouse_enable(true);
@@ -173,13 +166,13 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
         case SCRL_TO:
             if (record->event.pressed) {
-                cocot_config.scrl_mode ^= 1;
+                us_is_scrl_mode ^= 1;
             }
             break;
 
         case SCRL_MO:
             if (keycode == SCRL_MO) {
-                cocot_config.scrl_mode ^= 1;
+                us_is_scrl_mode ^= 1;
             }
             break;
 
@@ -227,7 +220,7 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
     smoothed_y *= sensitivity_multiplier * dynamic_multiplier;
 
     // Scroll mode handling
-    if (cocot_get_scroll_mode()) {
+    if (us_is_scrl_mode) {
         static int h_acm = 0, v_acm = 0;
 
         // Determine scroll direction
