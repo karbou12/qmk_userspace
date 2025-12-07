@@ -44,42 +44,42 @@
 #    define COCOT_AUTO_MOUSE_MODE true
 #endif
 
-cocot_config_t cocot_config;
-const static uint16_t cpi_array[] = COCOT_CPI_OPTIONS;
-const static uint16_t scrl_div_array[] = COCOT_SCROLL_DIVIDERS;
-const static uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
-const static uint8_t CPI_OPTION_SIZE = ARRAY_SIZE(cpi_array);
-const static uint8_t SCRL_DIV_SIZE = ARRAY_SIZE(scrl_div_array);
-const static uint8_t ANGLE_SIZE = ARRAY_SIZE(angle_array);
+cocot_config_t us_cocot_config;
+const static uint16_t us_cpi_array[] = COCOT_CPI_OPTIONS;
+const static uint16_t us_scrl_div_array[] = COCOT_SCROLL_DIVIDERS;
+const static uint16_t us_angle_array[] = COCOT_ROTATION_ANGLE;
+const static uint8_t us_cpi_array_size = ARRAY_SIZE(us_cpi_array);
+const static uint8_t us_scrl_div_array_size = ARRAY_SIZE(us_scrl_div_array);
+const static uint8_t us_angle_array_size = ARRAY_SIZE(us_angle_array);
 
 static bool us_is_scrl_mode = false;
 
 void US_PD_matrix_init_kb(void) {
     // is safe to just read CPI setting since matrix init
     // comes before pointing device init.
-    cocot_config.raw = eeconfig_read_kb();
-    if (cocot_config.cpi_idx > CPI_OPTION_SIZE) // || cocot_config.scrl_div > SCRL_DIV_SIZE || cocot_config.rotation_angle > ANGLE_SIZE)
+    us_cocot_config.raw = eeconfig_read_kb();
+    if (us_cocot_config.cpi_idx > us_cpi_array_size) // || cocot_config.scrl_div > SCRL_DIV_SIZE || cocot_config.rotation_angle > ANGLE_SIZE)
     {
         eeconfig_init_kb();
     }
 }
 
 void US_PD_eeconfig_init_kb(void) {
-    cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
-    cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
-    cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
-    cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
-    cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
-    eeconfig_update_kb(cocot_config.raw);
+    us_cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
+    us_cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
+    us_cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
+    us_cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
+    us_cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
+    eeconfig_update_kb(us_cocot_config.raw);
 }
 
 void US_PD_pointing_device_init_kb(void) {
     // set the CPI.
-    pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
-    cocot_config.raw = eeconfig_read_kb();
-    eeconfig_update_kb(cocot_config.raw);
+    pointing_device_set_cpi(us_cpi_array[us_cocot_config.cpi_idx]);
+    us_cocot_config.raw = eeconfig_read_kb();
+    eeconfig_update_kb(us_cocot_config.raw);
     //set_auto_mouse_layer(4);
-    set_auto_mouse_enable(cocot_config.auto_mouse);
+    set_auto_mouse_enable(us_cocot_config.auto_mouse);
 }
 
 layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
@@ -99,7 +99,7 @@ layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
             //rgblight_sethsv_range(HSV_RED, 0, 9);
             us_is_scrl_mode = false;
 
-            if (cocot_config.auto_mouse) {
+            if (us_cocot_config.auto_mouse) {
                 set_auto_mouse_enable(true);
             } else {
                 //state = remove_auto_mouse_layer(state, false);
@@ -130,37 +130,37 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
 #endif
         case CPI_SW:
             if (record->event.pressed) {
-                cocot_config.cpi_idx = (cocot_config.cpi_idx + 1) % CPI_OPTION_SIZE;
-                eeconfig_update_kb(cocot_config.raw);
-                pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
+                us_cocot_config.cpi_idx = (us_cocot_config.cpi_idx + 1) % us_cpi_array_size;
+                eeconfig_update_kb(us_cocot_config.raw);
+                pointing_device_set_cpi(us_cpi_array[us_cocot_config.cpi_idx]);
             }
             break;
 
         case SCRL_SW:
             if (record->event.pressed) {
-                cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
-                eeconfig_update_kb(cocot_config.raw);
+                us_cocot_config.scrl_div = (us_cocot_config.scrl_div + 1) % us_scrl_div_array_size;
+                eeconfig_update_kb(us_cocot_config.raw);
             }
             break;
 
         case ROT_R15:
             if (record->event.pressed) {
-                cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
-                eeconfig_update_kb(cocot_config.raw);
+                us_cocot_config.rotation_angle = (us_cocot_config.rotation_angle + 1) % us_angle_array_size;
+                eeconfig_update_kb(us_cocot_config.raw);
             }
             break;
 
         case ROT_L15:
             if (record->event.pressed) {
-                cocot_config.rotation_angle = (ANGLE_SIZE + cocot_config.rotation_angle - 1) % ANGLE_SIZE;
-                eeconfig_update_kb(cocot_config.raw);
+                us_cocot_config.rotation_angle = (us_angle_array_size + us_cocot_config.rotation_angle - 1) % us_angle_array_size;
+                eeconfig_update_kb(us_cocot_config.raw);
             }
             break;
 
         case SCRL_IN:
             if (record->event.pressed) {
-                cocot_config.scrl_inv ^= 1;
-                eeconfig_update_kb(cocot_config.raw);
+                us_cocot_config.scrl_inv ^= 1;
+                eeconfig_update_kb(us_cocot_config.raw);
             }
             break;
 
@@ -178,9 +178,9 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
         case AM_TOG:
             if(record->event.pressed) {
-                cocot_config.auto_mouse ^= 1;
-                eeconfig_update_kb(cocot_config.raw);
-                set_auto_mouse_enable(cocot_config.auto_mouse);
+                us_cocot_config.auto_mouse ^= 1;
+                eeconfig_update_kb(us_cocot_config.raw);
+                set_auto_mouse_enable(us_cocot_config.auto_mouse);
             }
             return false;
     }
@@ -198,7 +198,7 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
     float sensitivity_multiplier = 1.5; // Base sensitivity multiplier
 
     // Apply rotation angle adjustment
-    double rad = angle_array[cocot_config.rotation_angle] * (M_PI / 180) * -1;
+    double rad = us_angle_array[us_cocot_config.rotation_angle] * (M_PI / 180) * -1;
     float rotated_x = -(mouse_report.x * cos(rad) - mouse_report.y * sin(rad)); // Reverse X-direction
     float rotated_y = mouse_report.x * sin(rad) + mouse_report.y * cos(rad);
 
@@ -231,7 +231,7 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
         }
 
         // Accumulate scroll values
-        if (cocot_config.scrl_inv) {
+        if (us_cocot_config.scrl_inv) {
             h_acm += smoothed_x;
             v_acm -= smoothed_y;
         } else {
@@ -240,17 +240,17 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
         }
 
         // Calculate scroll values with division factor
-        int8_t h_scroll = h_acm >> scrl_div_array[cocot_config.scrl_div];
-        int8_t v_scroll = v_acm >> scrl_div_array[cocot_config.scrl_div];
+        int8_t h_scroll = h_acm >> us_scrl_div_array[us_cocot_config.scrl_div];
+        int8_t v_scroll = v_acm >> us_scrl_div_array[us_cocot_config.scrl_div];
 
         // Apply scroll to mouse report
         if (h_scroll != 0) {
             mouse_report.h += h_scroll;
-            h_acm -= h_scroll << scrl_div_array[cocot_config.scrl_div];
+            h_acm -= h_scroll << us_scrl_div_array[us_cocot_config.scrl_div];
         }
         if (v_scroll != 0) {
             mouse_report.v += v_scroll;
-            v_acm -= v_scroll << scrl_div_array[cocot_config.scrl_div];
+            v_acm -= v_scroll << us_scrl_div_array[us_cocot_config.scrl_div];
         }
 
         // Reset X/Y movement in scroll mode

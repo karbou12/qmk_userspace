@@ -17,7 +17,7 @@ typedef union {
     };
 } cocot_config_t;
 
-extern cocot_config_t cocot_config;
+extern cocot_config_t us_cocot_config;
 
 extern void US_PD_matrix_init_kb(void);
 extern void US_PD_eeconfig_init_kb(void);
