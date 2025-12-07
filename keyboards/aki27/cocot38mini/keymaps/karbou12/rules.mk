@@ -1,7 +1,10 @@
-VIA_ENABLE = yes
-VIAL_ENABLE = yes
 ENCODER_MAP_ENABLE = yes
 CAPS_WORD_ENABLE = yes
-KEY_OVERRIDE_ENABLE = yes
+OS_DETECTION_ENABLE = no
+CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY = yes
+CUSTOM_RGBLIGHT = no
+CUSTOM_KEY_OVERRIDE = yes
 
-INTROSPECTION_KEYMAP_C = my_introspection_keymap.c
+SRC += my_rgb.c \
+	   my_tap_hold.c
+
