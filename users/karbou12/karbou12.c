@@ -30,7 +30,7 @@ void eeconfig_init_user_datablock(void) {
 #endif
 
     // init global memory
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     US_RGB_eeconfig_init_mem();
 #endif
 #ifdef OS_DETECTION_ENABLE
@@ -77,7 +77,7 @@ void keyboard_post_init_user(void) {
 #endif
 
     // init rgblight
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     US_RGB_keyboard_post_init_user();
 #endif
 
@@ -108,7 +108,7 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
 #endif
 
 layer_state_t default_layer_state_set_user(layer_state_t state) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     layer_state_t ret_state = US_RGB_default_layer_state_set_user(state);
     return ret_state;
 #else
@@ -117,7 +117,7 @@ layer_state_t default_layer_state_set_user(layer_state_t state) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     layer_state_t ret_state = US_RGB_layer_state_set_user(state);
     return ret_state;
 #else
@@ -128,7 +128,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!US_EECONFIG_process_record_user(keycode, record)) {
         return false;
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     } else if (!US_RGB_process_record_user(keycode, record)) {
         return false;
 #endif
@@ -141,14 +141,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     US_RGB_post_process_record_user(keycode, record);
 #endif
 }
 
 #ifdef CAPS_WORD_ENABLE
 void caps_word_set_user(bool active) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     US_RGB_caps_word_set_user(active);
 #endif
 }
@@ -157,5 +157,11 @@ void caps_word_set_user(bool active) {
 #ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     return US_TH_get_hold_on_other_key_press(keycode, record);
+}
+#endif
+
+#ifdef RGB_MATRIX_ENABLE
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    return US_RGB_rgb_matrix_indicators_advanced_user(led_min, led_max);
 }
 #endif

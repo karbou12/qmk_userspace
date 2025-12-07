@@ -25,6 +25,11 @@ ifeq ($(strip $(CUSTOM_RGBLIGHT)), yes)
 	SRC += $(USER_PATH)/us_rgb.c
 endif
 
+ifeq ($(strip $(CUSTOM_RGBMATRIX)), yes)
+	OPT_DEFS += -DRGB_MATRIX_ENABLE
+	SRC += $(USER_PATH)/us_rgb.c
+endif
+
 ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
 	SRC += $(USER_PATH)/us_os.c
 endif

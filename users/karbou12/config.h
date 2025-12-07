@@ -13,7 +13,7 @@
 #endif
 
 // DATA_MIN_SIZE is used for migration of gravity45 release
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 #define EECONFIG_USER_RGB_DATA_CALC_SIZE 4 * DYNAMIC_KEYMAP_LAYER_COUNT + 1
 #else
 #define EECONFIG_USER_RGB_DATA_CALC_SIZE 0

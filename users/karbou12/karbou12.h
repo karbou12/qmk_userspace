@@ -25,3 +25,7 @@ extern void caps_word_set_user(bool active);
 #ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 extern bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record);
 #endif
+
+#ifdef RGB_MATRIX_ENABLE
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max);
+#endif

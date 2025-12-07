@@ -4,13 +4,13 @@
 #include "karbou12.h"
 #include "us_eeconfig.h"
 
+#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 #define HSV_LAYER_END_SEGMENTS {0, 0, 0}
 #define HSV_LAYER_SEGMENTS(...) \
         { __VA_ARGS__, HSV_LAYER_END_SEGMENTS }
 #define HSV_LAYERS_LIST(...) \
         { __VA_ARGS__, NULL }
 
-#ifdef RGBLIGHT_LAYERS
 extern const hsv_t km_hsv_capsword[];
 extern const hsv_t * const km_hsv_layers[];
 
@@ -38,5 +38,8 @@ extern bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record);
 extern void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record);
 #ifdef CAPS_WORD_ENABLE
 extern void US_RGB_caps_word_set_user(bool active);
+#endif
+#ifdef RGB_MATRIX_ENABLE
+extern bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max);
 #endif
 #endif

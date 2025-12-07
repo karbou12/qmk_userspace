@@ -1,35 +1,27 @@
 #include "quantum.h"
+#include "us_rgb.h"
 
 #ifdef RGB_MATRIX_ENABLE
+const hsv_t PROGMEM km_hsv_layer0[] = HSV_LAYER_SEGMENTS({HSV_CYAN});
+const hsv_t PROGMEM km_hsv_layer1[] = HSV_LAYER_SEGMENTS({HSV_YELLOW});
+const hsv_t PROGMEM km_hsv_layer2[] = HSV_LAYER_SEGMENTS({HSV_GREEN});
+const hsv_t PROGMEM km_hsv_layer3[] = HSV_LAYER_SEGMENTS({HSV_CORAL});
+const hsv_t PROGMEM km_hsv_layer4[] = HSV_LAYER_SEGMENTS({HSV_MAGENTA});
+const hsv_t PROGMEM km_hsv_layer5[] = HSV_LAYER_SEGMENTS({HSV_PURPLE});
+const hsv_t PROGMEM km_hsv_layer6[] = HSV_LAYER_SEGMENTS({HSV_CHARTREUSE});
+const hsv_t PROGMEM km_hsv_layer7[] = HSV_LAYER_SEGMENTS({HSV_ORANGE});
+const hsv_t PROGMEM km_hsv_capsword[] = HSV_LAYER_SEGMENTS({HSV_RED});
+const hsv_t PROGMEM km_hsv_off[] = HSV_LAYER_SEGMENTS({HSV_OFF});
 
-bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    int is_layer = get_highest_layer(layer_state|default_layer_state);
-    HSV hsv = {0, 255, rgblight_get_val()};
-    if (is_layer == 1) {
-      hsv.h = 43; //YELLOW
-    } else if (is_layer == 2)  {
-      hsv.h = 85; //GREEN
-    } else if (is_layer == 3)  {
-      hsv.h = 22; //CORAL
-    } else if (is_layer == 4)  {
-      hsv.h = 0; //RED
-    } else if (is_layer == 5)  {
-      hsv.h = 191; //PURPLE
-    } else if (is_layer == 6)  {
-      hsv.h = 64; //CHARTREUSE
-    } else if (is_layer == 7)  {
-      hsv.h = 224;
-    } else {
-      hsv.h = 128; //CYAN
-    }
-    RGB rgb = hsv_to_rgb(hsv);
-
-    for (uint8_t i = led_min; i < led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
-          rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-        }
-    }
-    return false;
-};
-
+const hsv_t * const PROGMEM km_hsv_layers[] = HSV_LAYERS_LIST(
+    km_hsv_layer0,
+    km_hsv_layer1,
+    km_hsv_layer2,
+    km_hsv_layer3,
+    km_hsv_layer4,
+    km_hsv_layer5,
+    km_hsv_layer6,
+    km_hsv_layer7,
+    km_hsv_capsword
+);
 #endif
