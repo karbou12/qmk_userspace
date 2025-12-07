@@ -102,8 +102,6 @@ layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
 };
 
 bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
-    // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-
     switch (keycode) {
 #ifndef MOUSEKEY_ENABLE
         // process KC_MS_BTN1~8 by myself
@@ -143,10 +141,9 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case SCRL_IN:
-            if (record->event.pressed) {
-                us_cocot_config.scrl_inv ^= 1;
-                eeconfig_update_kb(us_cocot_config.raw);
+        case SCRL_MO:
+            if (keycode == SCRL_MO) {
+                us_is_scrl_mode ^= 1;
             }
             break;
 
@@ -156,9 +153,10 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
             }
             break;
 
-        case SCRL_MO:
-            if (keycode == SCRL_MO) {
-                us_is_scrl_mode ^= 1;
+        case SCRL_IN:
+            if (record->event.pressed) {
+                us_cocot_config.scrl_inv ^= 1;
+                eeconfig_update_kb(us_cocot_config.raw);
             }
             break;
 
