@@ -43,3 +43,7 @@ ifeq ($(strip $(CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY)), yes)
 	OPT_DEFS += -DCUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 	SRC += $(USER_PATH)/us_tap_hold.c
 endif
+
+ifeq ($(strip $(POINTING_DEVICE_ENABLE)), yes)
+	SRC += $(USER_PATH)/us_pointing_device.c
+endif

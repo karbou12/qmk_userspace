@@ -5,6 +5,16 @@
 
 enum custom_keycodes {
     USR_RESET = QK_KB_0,
+#ifdef POINTING_DEVICE_ENABLE
+    CPI_SW,
+    SCRL_SW,
+    ROT_R15,
+    ROT_L15,
+    SCRL_MO,
+    SCRL_TO,
+    SCRL_IN,
+    AM_TOG,
+#endif
 #if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
     USR_RGB_LAYER_TOG,
     USR_RGB_RETAIN_VAL_TOG,

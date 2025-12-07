@@ -1,28 +1,10 @@
-/* Copyright 2020 Alexander Tulloh
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#include "quantum.h"
+// Copyright 2020 Alexander Tulloh
+// Copyright 2022 aki27 (@aki27kbd)
+// Copyright 2025 Tano Karbou (github: karbou12 / X: @karbou_12)
+// SPDX-License-Identifier: GPL-2.0-or-later
+#include "us_pointing_device.h"
 #include <math.h>
-#include "cocot38mini.h"
-#include "wait.h"
-#include "debug.h"
-#include <stdio.h>
-#include "pointing_device.h"
-extern const pointing_device_driver_t pointing_device_driver;
-
+#include "us_keycodes.h"
 
 // Invert vertical scroll direction
 #ifndef COCOT_SCROLL_INV_DEFAULT
@@ -49,7 +31,6 @@ extern const pointing_device_driver_t pointing_device_driver;
 #    define COCOT_SCROLL_DIV_DEFAULT 4
 #endif
 
-
 #ifndef COCOT_ROTATION_ANGLE
 #    define COCOT_ROTATION_ANGLE { -90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90 }
 #    ifndef COCOT_ROTATION_DEFAULT
@@ -63,10 +44,6 @@ extern const pointing_device_driver_t pointing_device_driver;
 #    define COCOT_AUTO_MOUSE_MODE true
 #endif
 
-
-
-
-
 cocot_config_t cocot_config;
 uint16_t cpi_array[] = COCOT_CPI_OPTIONS;
 uint16_t scrl_div_array[] = COCOT_SCROLL_DIVIDERS;
@@ -74,8 +51,6 @@ uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
 #define CPI_OPTION_SIZE (sizeof(cpi_array) / sizeof(uint16_t))
 #define SCRL_DIV_SIZE (sizeof(scrl_div_array) / sizeof(uint16_t))
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
-
-
 
 void pointing_device_init_kb(void) {
     // set the CPI.
@@ -85,7 +60,6 @@ void pointing_device_init_kb(void) {
     //set_auto_mouse_layer(4);
     set_auto_mouse_enable(cocot_config.auto_mouse);
 }
-
 
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     static float x_accumulator = 0.0;
@@ -178,10 +152,9 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     return pointing_device_task_user(mouse_report);
 }
 
-
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-    
+
     if (!process_record_user(keycode, record)) return false;
 
     switch (keycode) {
@@ -203,7 +176,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
                 set_auto_mouse_enable(cocot_config.auto_mouse);
                 //auto_mouse_tg_off = !get_auto_mouse_enable();
             } // do nothing on key up
-            return false; // prevent further processing of keycode            
+            return false; // prevent further processing of keycode
     //*/
     }
 
@@ -217,7 +190,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
         cocot_config.scrl_div = (cocot_config.scrl_div + 1) % SCRL_DIV_SIZE;
         eeconfig_update_kb(cocot_config.raw);
     }
-    
+
     if (keycode == ROT_R15 && record->event.pressed) {
         cocot_config.rotation_angle = (cocot_config.rotation_angle + 1) % ANGLE_SIZE;
         eeconfig_update_kb(cocot_config.raw);
@@ -261,14 +234,14 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
         default:
             //rgblight_sethsv_range(HSV_RED, 0, 9);
             cocot_set_scroll_mode(false);
-            
+
             if (cocot_config.auto_mouse) {
                 set_auto_mouse_enable(true);
             } else {
                 //state = remove_auto_mouse_layer(state, false);
                 set_auto_mouse_enable(false);
             }
-            
+
             //set_auto_mouse_enable(true);
             //state = remove_auto_mouse_layer(state, false);
             //set_auto_mouse_enable(cocot_config.auto_mouse);
