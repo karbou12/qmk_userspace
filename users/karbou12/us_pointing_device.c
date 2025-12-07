@@ -85,33 +85,19 @@ void US_PD_pointing_device_init_kb(void) {
 layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
     switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
         case 1 ... 2:
-            //rgblight_sethsv_range(HSV_YELLOW, 0, 9);
             us_is_scrl_mode = true;
             state = remove_auto_mouse_layer(state, false);
             set_auto_mouse_enable(false);
             break;
         case 3 ... 7:
-            //rgblight_sethsv_range(HSV_CYAN, 0, 9);
             us_is_scrl_mode = false;
-            //set_auto_mouse_enable(true);
             break;
         default:
-            //rgblight_sethsv_range(HSV_RED, 0, 9);
             us_is_scrl_mode = false;
+            set_auto_mouse_enable(us_cocot_config.auto_mouse ? true : false);
 
-            if (us_cocot_config.auto_mouse) {
-                set_auto_mouse_enable(true);
-            } else {
-                //state = remove_auto_mouse_layer(state, false);
-                set_auto_mouse_enable(false);
-            }
-
-            //set_auto_mouse_enable(true);
-            //state = remove_auto_mouse_layer(state, false);
-            //set_auto_mouse_enable(cocot_config.auto_mouse);
             break;
-        }
-    //rgblight_set_effect_range( 9, 36);
+    }
     return state;
 };
 
