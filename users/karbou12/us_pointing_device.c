@@ -52,7 +52,7 @@ uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
 #define SCRL_DIV_SIZE (sizeof(scrl_div_array) / sizeof(uint16_t))
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
 
-void pointing_device_init_kb(void) {
+void US_PD_pointing_device_init_kb(void) {
     // set the CPI.
     pointing_device_set_cpi(cpi_array[cocot_config.cpi_idx]);
     cocot_config.raw = eeconfig_read_kb();
@@ -61,7 +61,7 @@ void pointing_device_init_kb(void) {
     set_auto_mouse_enable(cocot_config.auto_mouse);
 }
 
-report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
     static float x_accumulator = 0.0;
     static float y_accumulator = 0.0;
     static float prev_x = 0.0, prev_y = 0.0;
@@ -149,13 +149,11 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         }
     }
 
-    return pointing_device_task_user(mouse_report);
+    return mouse_report;
 }
 
-bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
+bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
     // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-
-    if (!process_record_user(keycode, record)) return false;
 
     switch (keycode) {
         #ifndef MOUSEKEY_ENABLE
@@ -218,7 +216,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
 }
 
 
-layer_state_t layer_state_set_kb(layer_state_t state) {
+layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
     switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
         case 1 ... 2:
             //rgblight_sethsv_range(HSV_YELLOW, 0, 9);
@@ -248,12 +246,12 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
             break;
         }
     //rgblight_set_effect_range( 9, 36);
-  return state;
+    return state;
 };
 
 
 
-void eeconfig_init_kb(void) {
+void US_PD_eeconfig_init_kb(void) {
     cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
     cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
     cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
@@ -261,11 +259,10 @@ void eeconfig_init_kb(void) {
     cocot_config.scrl_mode = false;
     cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
     eeconfig_update_kb(cocot_config.raw);
-    eeconfig_init_user();
 }
 
 
-void matrix_init_kb(void) {
+void US_PD_matrix_init_kb(void) {
     // is safe to just read CPI setting since matrix init
     // comes before pointing device init.
     cocot_config.raw = eeconfig_read_kb();
@@ -273,7 +270,6 @@ void matrix_init_kb(void) {
     {
         eeconfig_init_kb();
     }
-    matrix_init_user();
 }
 
 

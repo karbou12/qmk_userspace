@@ -6,6 +6,7 @@
 #include "us_key_override.h"
 #include "us_os.h"
 #include "us_rgb.h"
+#include "us_pointing_device.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
 
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
@@ -17,6 +18,42 @@ uint16_t g_us_vial_keycode16 = KC_NO;
 static uint32_t eeconfig_init_ver = 0;
 static uint32_t post_init_ver = 0;
 #endif
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+void pointing_device_init_kb(void) {
+    US_PD_pointing_device_init_kb();
+    // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
+}
+
+report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+    const report_mouse_t ret_mouse_report = US_PD_pointing_device_task_kb(mouse_report);
+    return pointing_device_task_user(ret_mouse_report);
+}
+
+bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
+    if (!process_record_user(keycode, record)) {
+        return false;
+    } else if (!US_PD_process_record_kb(keycode, record)) {
+        return false;
+    }
+    return true;
+}
+
+layer_state_t layer_state_set_kb(layer_state_t state) {
+    const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
+    return layer_state_set_user(ret_state);
+}
+
+void eeconfig_init_kb(void) {
+    US_PD_eeconfig_init_kb();
+    eeconfig_init_user();
+}
+
+void matrix_init_kb(void) {
+    US_PD_matrix_init_kb();
+    matrix_init_user();
+}
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
