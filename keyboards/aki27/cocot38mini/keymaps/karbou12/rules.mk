@@ -5,6 +5,6 @@ CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY = yes
 CUSTOM_RGBLIGHT = no
 CUSTOM_KEY_OVERRIDE = yes
 
-SRC += my_rgb.c \
-	   my_tap_hold.c
+SRC += km_rgb.c \
+	   km_tap_hold.c
 
