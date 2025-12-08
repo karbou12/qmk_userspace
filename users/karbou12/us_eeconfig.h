@@ -6,18 +6,35 @@
 #include "karbou12.h"
 
 #ifdef POINTING_DEVICE_ENABLE
-typedef union {
-    uint32_t raw;
-    struct {
-        uint8_t cpi_idx;
-        uint8_t scrl_div;
-        uint8_t rotation_angle;
-        bool auto_mouse: 1;
-        bool scrl_inv: 1;
+typedef struct PACKED {
+    uint8_t cpi_idx;
+    uint8_t scrl_div;
+    uint8_t rotation_angle;
+    union {
+        uint8_t flag_raw;
+        struct {
+            bool auto_mouse: 1;
+            bool scrl_inv: 1;
+            uint8_t dummy : 6;
+        } flags;
     };
-} cocot_config_t;
+} us_pd_config_t_v1;
 
-extern cocot_config_t us_cocot_config;
+typedef struct PACKED {
+    us_pd_config_t_v1 pd;
+} us_kb_config_t_v1;
+#define US_BASE_FW_VER_OF_KB_CONFIG_V1 US_CONCAT_VER(1, 0, 0)
+
+typedef union {
+    us_kb_config_t_v1 v1;
+} us_kb_config_u;
+
+#define US_KB_CONFIG_VERSION 1
+#define US_KB_CONFIG_V_CONCAT(n) us_kb_config_t_v ## n
+#define US_KB_CONFIG_V(n)  US_KB_CONFIG_V_CONCAT(n)
+#define us_kb_config_t US_KB_CONFIG_V(US_KB_CONFIG_VERSION)
+
+extern us_kb_config_t us_kb_config;
 #endif
 
 typedef enum {
@@ -156,8 +173,10 @@ extern void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_f
 #endif
 
 #ifdef POINTING_DEVICE_ENABLE
+extern bool US_EECONFIG_migrate_kb_datablock(void);
+
 // override func
-extern void US_EECONFIG_eeconfig_init_kb(void);
+extern void US_EECONFIG_eeconfig_init_kb_datablock(void);
 extern void US_EECONFIG_keyboard_post_init_kb(void);
 extern bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record);
 #endif

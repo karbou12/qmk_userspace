@@ -5,10 +5,11 @@
 #include "us_keycodes.h"
 #include "us_rgb.h"
 #include "us_os.h"
+#include "us_pointing_device.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
 
 #ifdef POINTING_DEVICE_ENABLE
-cocot_config_t us_cocot_config;
+us_kb_config_t us_kb_config = {0};
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
@@ -25,16 +26,20 @@ static void parse_version(const uint32_t version, uint16_t* parsed_version) {
 }
 
 void us_dump_eeconfig(const char* const func) {
+    uint16_t version[3] = {0};
+
 #ifdef POINTING_DEVICE_ENABLE
     parse_version(EECONFIG_KB_DATA_VERSION, version);
     uprintf("------------------------------------------------------------\n");
-    uprintf("%s DUMP EEPROM KB DATA.\n",
+    uprintf("%s DUMP EEPROM KB DATA. ver:%04x (%u.%u.%u), size:%u, defined size:%u\n",
+            func, EECONFIG_KB_DATA_VERSION, version[2], version[1], version[0],
+            sizeof(us_kb_config), EECONFIG_KB_DATA_SIZE);
     uprintf("cpi_idx:%u, scrl_div:%u, rotation_angle:%u\n",
-             us_cocot_config.cpi_idx, us_cocot_config.scrl_div, us_cocot_config.rotation_angle);
-    uprintf("auto_mouse:%s\n", us_cocot_config.auto_mouse ? "true" : "false");
-    uprintf("scrl_inv:%s\n", us_cocot_config.scrl_inv ? "true" : "false");
+             us_kb_config.pd.cpi_idx, us_kb_config.pd.scrl_div, us_kb_config.pd.rotation_angle);
+    uprintf("auto_mouse:%s\n", us_kb_config.pd.flags.auto_mouse ? "true" : "false");
+    uprintf("scrl_inv:%s\n", us_kb_config.pd.flags.scrl_inv ? "true" : "false");
 #endif
-    uint16_t version[3] = {0};
+
     parse_version(EECONFIG_USER_DATA_VERSION, version);
     uprintf("------------------------------------------------------------\n");
     uprintf("%s DUMP EEPROM USER DATA. ver:%04x (%u.%u.%u), size:%u, defined size:%u\n",
@@ -86,48 +91,48 @@ static uint32_t us_get_offset(const us_user_config_field_e field) {
 
 #ifdef POINTING_DEVICE_ENABLE
 uint8_t US_EECONFIG_get_pd_cpi_idx_from_mem(void) {
-    return us_cocot_config.cpi_idx;
+    return us_kb_config.pd.cpi_idx;
 }
 
 void US_EECONFIG_update_pd_cpi_idx_to_eeprom(const uint8_t cpi_idx) {
-    us_cocot_config.cpi_idx = cpi_idx;
-    eeconfig_update_kb(us_cocot_config.raw);
+    us_kb_config.pd.cpi_idx = cpi_idx;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, cpi_idx);
 }
 
 uint8_t US_EECONFIG_get_pd_scrl_div_from_mem(void) {
-    return us_cocot_config.scrl_div;
+    return us_kb_config.pd.scrl_div;
 }
 
 void US_EECONFIG_update_pd_scrl_div_to_eeprom(const uint8_t scrl_div) {
-    us_cocot_config.scrl_div = scrl_div;
-    eeconfig_update_kb(us_cocot_config.raw);
+    us_kb_config.pd.scrl_div = scrl_div;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, scrl_div);
 }
 
 uint8_t US_EECONFIG_get_pd_rotation_angle_from_mem(void) {
-    return us_cocot_config.rotation_angle;
+    return us_kb_config.pd.rotation_angle;
 }
 
 void US_EECONFIG_update_pd_rotation_angle_to_eeprom(const uint8_t rotation_angle) {
-    us_cocot_config.rotation_angle = rotation_angle;
-    eeconfig_update_kb(us_cocot_config.raw);
+    us_kb_config.pd.rotation_angle = rotation_angle;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, rotation_angle);
 }
 
 bool US_EECONFIG_get_pd_auto_mouse_from_mem(void) {
-    return us_cocot_config.auto_mouse;
+    return us_kb_config.pd.flags.auto_mouse;
 }
 
 void US_EECONFIG_update_pd_auto_mouse_to_eeprom(const bool auto_mouse) {
-    us_cocot_config.auto_mouse = auto_mouse;
-    eeconfig_update_kb(us_cocot_config.raw);
+    us_kb_config.pd.flags.auto_mouse = auto_mouse;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, flag_raw);
 }
 
 bool US_EECONFIG_get_pd_scrl_inv_from_mem(void) {
-    return us_cocot_config.scrl_inv;
+    return us_kb_config.pd.flags.scrl_inv;
 }
 
 void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
-    us_cocot_config.scrl_inv = scrl_inv;
-    eeconfig_update_kb(us_cocot_config.raw);
+    us_kb_config.pd.flags.scrl_inv = scrl_inv;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, flag_raw);
 }
 #endif
 
@@ -199,19 +204,59 @@ void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e 
 #endif
 
 #ifdef POINTING_DEVICE_ENABLE
-void US_EECONFIG_eeconfig_init_kb(void) {
-    eeconfig_update_kb(us_cocot_config.raw);
+bool US_EECONFIG_migrate_kb_datablock(void) {
+    const uint32_t prev_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+
+    if (prev_ver < US_BASE_FW_VER_OF_USER_CONFIG_V1) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : it may be the first vial install or very early version is installed.\n", __FUNCTION__);
+#endif
+        return false;
+    }
+
+    // backup current eeprom data.
+    us_kb_config_u us_kb_config_bk;
+    const uint32_t bk_size = sizeof(us_kb_config_t);
+
+#if 1
+    // here, use eeprom func directly because eeconfig_read_user_datablock just init memory if version is invalid.
+    void *ee_start = (void *)(uintptr_t)(EECONFIG_KB_DATABLOCK);
+    void *ee_end   = (void *)(uintptr_t)(EECONFIG_KB_DATABLOCK + bk_size);
+    eeprom_read_block(&us_kb_config_bk, ee_start, ee_end - ee_start);
+#else
+    eeconfig_read_kb_datablock(&us_kb_config_bk, 0, bk_size);
+#endif
+
+    const us_kb_config_u us_kb_config_init = {0};
+    if (memcmp(&us_kb_config_bk, &us_kb_config_init, bk_size) == 0) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : global memory has no data.\n", __FUNCTION__);
+#endif
+        return false;
+    }
+
+    // migrate global memory
+    US_PD_eeconfig_migrate_kb_mem(&us_kb_config_bk, prev_ver);
+
+    // store global memory into eeprom user datablock
+    US_EECONFIG_eeconfig_init_kb_datablock();
+
+    return true;
+}
+
+void US_EECONFIG_eeconfig_init_kb_datablock(void) {
+    eeconfig_update_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
 }
 
 void US_EECONFIG_keyboard_post_init_kb(void) {
-    us_cocot_config.raw = eeconfig_read_kb();
+    eeconfig_read_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
 }
 
 bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case USR_RESET:
             if (record->event.pressed) {
-                eeconfig_init_kb();
+                eeconfig_init_kb_datablock();
             }
             return true;
         default:

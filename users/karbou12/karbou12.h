@@ -5,7 +5,7 @@
 
 #ifdef POINTING_DEVICE_ENABLE
 extern void matrix_init_kb(void);
-extern void eeconfig_init_kb(void);
+extern void eeconfig_init_kb_datablock(void);
 extern void pointing_device_init_kb(void);
 extern void keyboard_post_init_kb(void);
 extern layer_state_t layer_state_set_kb(layer_state_t state);

@@ -4,8 +4,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #pragma once
 #include "karbou12.h"
+#include "us_eeconfig.h"
 
 #ifdef POINTING_DEVICE_ENABLE
+extern void US_PD_eeconfig_migrate_kb_mem(const us_kb_config_u* bk, const uint32_t prev_ver);
 extern void US_PD_matrix_init_kb(void);
 extern void US_PD_eeconfig_init_kb_mem(void);
 extern void US_PD_pointing_device_init_kb(void);

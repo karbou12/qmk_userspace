@@ -54,6 +54,21 @@ const static uint8_t us_angle_array_size = ARRAY_SIZE(us_angle_array);
 
 static bool us_is_scrl_mode = false;
 
+void US_PD_eeconfig_migrate_kb_mem(const us_kb_config_u* bk, const uint32_t prev_ver) {
+    if (!bk || prev_ver < US_BASE_FW_VER_OF_KB_CONFIG_V1) {
+        return;
+    }
+
+    US_PD_eeconfig_init_kb_mem();
+
+    us_kb_config.pd.cpi_idx = bk->v1.pd.cpi_idx;
+    us_kb_config.pd.scrl_div = bk->v1.pd.scrl_div;
+    us_kb_config.pd.rotation_angle = bk->v1.pd.rotation_angle;
+
+    us_kb_config.pd.flags.scrl_inv = bk->v1.pd.flags.scrl_inv;
+    us_kb_config.pd.flags.auto_mouse = bk->v1.pd.flags.auto_mouse;
+}
+
 void US_PD_matrix_init_kb(void) {
     // is safe to just read CPI setting since matrix init
     // comes before pointing device init.
@@ -63,13 +78,13 @@ void US_PD_matrix_init_kb(void) {
 }
 
 void US_PD_eeconfig_init_kb_mem(void) {
-    us_cocot_config.raw = 0u;
+    us_kb_config.pd.cpi_idx = COCOT_CPI_DEFAULT;
+    us_kb_config.pd.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
+    us_kb_config.pd.rotation_angle = COCOT_ROTATION_DEFAULT;
 
-    us_cocot_config.cpi_idx = COCOT_CPI_DEFAULT;
-    us_cocot_config.scrl_div = COCOT_SCROLL_DIV_DEFAULT;
-    us_cocot_config.rotation_angle = COCOT_ROTATION_DEFAULT;
-    us_cocot_config.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
-    us_cocot_config.auto_mouse = COCOT_AUTO_MOUSE_MODE;
+    us_kb_config.pd.flag_raw = 0u;
+    us_kb_config.pd.flags.scrl_inv = COCOT_SCROLL_INV_DEFAULT;
+    us_kb_config.pd.flags.auto_mouse = COCOT_AUTO_MOUSE_MODE;
 }
 
 void US_PD_pointing_device_init_kb(void) {

@@ -14,9 +14,13 @@ uint16_t g_us_vial_keycode16 = KC_NO;
 #endif
 
 #ifdef CONSOLE_ENABLE
+#if (EECONFIG_KB_DATA_SIZE) > 0
+static uint32_t eeconfig_init_kb_ver = 0;
+static uint32_t post_init_kb_ver = 0;
+#endif
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
-static uint32_t eeconfig_init_ver = 0;
-static uint32_t post_init_ver = 0;
+static uint32_t eeconfig_init_user_ver = 0;
+static uint32_t post_init_user_ver = 0;
 #endif
 #endif
 
@@ -26,16 +30,23 @@ void matrix_init_kb(void) {
     matrix_init_user();
 }
 
-void eeconfig_init_kb(void) {
+void eeconfig_init_kb_datablock(void) {
+#ifdef CONSOLE_ENABLE
+    eeconfig_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+    uprintf("============================================================\n");
+    uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+    uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
+            __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", eeconfig_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
     // init global memory
     US_PD_eeconfig_init_kb_mem();
 
     US_DUMP_EECONFIG();
 
     // store global memory into eeprom user datablock
-    US_EECONFIG_eeconfig_init_kb();
+    US_EECONFIG_eeconfig_init_kb_datablock();
 
-    eeconfig_init_user();
+    // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
 }
 
 void pointing_device_init_kb(void) {
@@ -44,18 +55,30 @@ void pointing_device_init_kb(void) {
 }
 
 void keyboard_post_init_kb(void) {
+#ifdef CONSOLE_ENABLE
+    post_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+    uprintf("============================================================\n");
+    uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+    uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
+            __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", post_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
+
     US_DUMP_EECONFIG();
 
-    if (!eeconfig_is_enabled()) {
-        eeconfig_init_kb();
+#if (EECONFIG_KB_DATA_SIZE) > 0
+    if (!eeconfig_is_kb_datablock_valid()) {
+        if (!US_EECONFIG_migrate_kb_datablock()) {
+            eeconfig_init_kb_datablock();
+        }
     }
 
-    // read eeprom kb into global memory
+    // read eeprom kb datablock into global memory
     US_EECONFIG_keyboard_post_init_kb();
 
     US_DUMP_EECONFIG();
 
     US_PD_keyboard_post_init_kb();
+#endif
 
     keyboard_post_init_user();
 }
@@ -92,11 +115,11 @@ bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 void eeconfig_init_user_datablock(void) {
 #ifdef CONSOLE_ENABLE
-    eeconfig_init_ver = eeprom_read_dword(EECONFIG_USER);
+    eeconfig_init_user_ver = eeprom_read_dword(EECONFIG_USER);
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
-            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeconfig_init_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeconfig_init_user_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
 #endif
 
     // init global memory
@@ -117,13 +140,13 @@ void eeconfig_init_user_datablock(void) {
 void keyboard_post_init_user(void) {
 #ifdef CONSOLE_ENABLE
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
-    post_init_ver = eeprom_read_dword(EECONFIG_USER);
+    post_init_user_ver = eeprom_read_dword(EECONFIG_USER);
 #endif
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
-            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", post_init_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", post_init_user_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
 #endif
 #endif
 
@@ -164,7 +187,7 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
             __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeprom_read_dword(EECONFIG_USER), EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
-    uprintf("%s, init ver:%04lx, post ver:%04lx\n", __FUNCTION__, eeconfig_init_ver, post_init_ver);
+    uprintf("%s, init ver:%04lx, post ver:%04lx\n", __FUNCTION__, eeconfig_init_user_ver, post_init_user_ver);
 #endif
 
     US_DUMP_EECONFIG();
