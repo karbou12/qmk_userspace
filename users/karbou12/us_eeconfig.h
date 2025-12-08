@@ -172,14 +172,15 @@ extern us_user_config_field_e US_EECONFIG_get_os_default_layer_from_mem(void);
 extern void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e field);
 #endif
 
-#ifdef POINTING_DEVICE_ENABLE
+#if (EECONFIG_KB_DATA_SIZE) > 0
 extern bool US_EECONFIG_migrate_kb_datablock(void);
 
 // override func
 extern void US_EECONFIG_eeconfig_init_kb_datablock(void);
+#endif
+
 extern void US_EECONFIG_keyboard_post_init_kb(void);
 extern bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record);
-#endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 extern bool US_EECONFIG_migrate_user_datablock(void);

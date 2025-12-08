@@ -203,7 +203,7 @@ void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e 
 }
 #endif
 
-#ifdef POINTING_DEVICE_ENABLE
+#if (EECONFIG_KB_DATA_SIZE) > 0
 bool US_EECONFIG_migrate_kb_datablock(void) {
     const uint32_t prev_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
 
@@ -236,7 +236,9 @@ bool US_EECONFIG_migrate_kb_datablock(void) {
     }
 
     // migrate global memory
+#ifdef POINTING_DEVICE_ENABLE
     US_PD_eeconfig_migrate_kb_mem(&us_kb_config_bk, prev_ver);
+#endif
 
     // store global memory into eeprom user datablock
     US_EECONFIG_eeconfig_init_kb_datablock();
@@ -247,23 +249,27 @@ bool US_EECONFIG_migrate_kb_datablock(void) {
 void US_EECONFIG_eeconfig_init_kb_datablock(void) {
     eeconfig_update_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
 }
+#endif
 
 void US_EECONFIG_keyboard_post_init_kb(void) {
+#if (EECONFIG_KB_DATA_SIZE) > 0
     eeconfig_read_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
+#endif
 }
 
 bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case USR_RESET:
             if (record->event.pressed) {
+#if (EECONFIG_KB_DATA_SIZE) > 0
                 eeconfig_init_kb_datablock();
+#endif
             }
             return true;
         default:
             return true;
     }
 }
-#endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 bool US_EECONFIG_migrate_user_datablock(void) {

@@ -29,7 +29,9 @@ void matrix_init_kb(void) {
     US_PD_matrix_init_kb();
     matrix_init_user();
 }
+#endif
 
+#if (EECONFIG_KB_DATA_SIZE) > 0
 void eeconfig_init_kb_datablock(void) {
 #ifdef CONSOLE_ENABLE
     eeconfig_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
@@ -38,8 +40,11 @@ void eeconfig_init_kb_datablock(void) {
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
             __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", eeconfig_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
 #endif
+
     // init global memory
+#ifdef POINTING_DEVICE_ENABLE
     US_PD_eeconfig_init_kb_mem();
+#endif
 
     US_DUMP_EECONFIG();
 
@@ -48,19 +53,26 @@ void eeconfig_init_kb_datablock(void) {
 
     // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
 }
+#endif
 
+#ifdef POINTING_DEVICE_ENABLE
 void pointing_device_init_kb(void) {
     US_PD_pointing_device_init_kb();
     // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
 }
+#endif
 
 void keyboard_post_init_kb(void) {
 #ifdef CONSOLE_ENABLE
+#if (EECONFIG_KB_DATA_SIZE) > 0
     post_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+#endif
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+#if (EECONFIG_KB_DATA_SIZE) > 0
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
             __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", post_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
 #endif
 
     US_DUMP_EECONFIG();
@@ -74,18 +86,26 @@ void keyboard_post_init_kb(void) {
 
     // read eeprom kb datablock into global memory
     US_EECONFIG_keyboard_post_init_kb();
+#endif
 
     US_DUMP_EECONFIG();
 
+#ifdef POINTING_DEVICE_ENABLE
     US_PD_keyboard_post_init_kb();
 #endif
+
+    US_DUMP_EECONFIG();
 
     keyboard_post_init_user();
 }
 
 layer_state_t layer_state_set_kb(layer_state_t state) {
+#ifdef POINTING_DEVICE_ENABLE
     const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
     return layer_state_set_user(ret_state);
+#else
+    return layer_state_set_user(state);
+#endif
 }
 
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
@@ -93,12 +113,15 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
         return false;
     } else if (!US_EECONFIG_process_record_kb(keycode, record)) {
         return false;
+#ifdef POINTING_DEVICE_ENABLE
     } else if (!US_PD_process_record_kb(keycode, record)) {
         return false;
+#endif
     }
     return true;
 }
 
+#ifdef POINTING_DEVICE_ENABLE
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     const report_mouse_t ret_mouse_report = US_PD_pointing_device_task_kb(mouse_report);
     return pointing_device_task_user(ret_mouse_report);

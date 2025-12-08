@@ -7,6 +7,8 @@
 #include "us_keycodes.h"
 #include "us_eeconfig.h"
 
+#ifdef POINTING_DEVICE_ENABLE
+
 // Invert vertical scroll direction
 #ifndef COCOT_SCROLL_INV_DEFAULT
 #    define COCOT_SCROLL_INV_DEFAULT true
@@ -310,3 +312,4 @@ bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
         return false;
     }
 }
+#endif
