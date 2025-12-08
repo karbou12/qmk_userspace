@@ -43,6 +43,23 @@ void pointing_device_init_kb(void) {
     // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
 }
 
+void keyboard_post_init_kb(void) {
+    US_DUMP_EECONFIG();
+
+    if (!eeconfig_is_enabled()) {
+        eeconfig_init_kb();
+    }
+
+    // read eeprom kb into global memory
+    US_EECONFIG_keyboard_post_init_kb();
+
+    US_DUMP_EECONFIG();
+
+    US_PD_keyboard_post_init_kb();
+
+    keyboard_post_init_user();
+}
+
 layer_state_t layer_state_set_kb(layer_state_t state) {
     const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
     return layer_state_set_user(ret_state);

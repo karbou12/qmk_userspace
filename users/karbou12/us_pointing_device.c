@@ -57,10 +57,8 @@ static bool us_is_scrl_mode = false;
 void US_PD_matrix_init_kb(void) {
     // is safe to just read CPI setting since matrix init
     // comes before pointing device init.
-    US_EECONFIG_keyboard_post_init_kb();
-    if (US_EECONFIG_get_pd_cpi_idx_from_mem() > us_cpi_array_size) // || cocot_config.scrl_div > SCRL_DIV_SIZE || cocot_config.rotation_angle > ANGLE_SIZE)
-    {
-        eeconfig_init_kb();
+    if (eeconfig_is_enabled()) {
+        US_EECONFIG_keyboard_post_init_kb();
     }
 }
 
@@ -75,10 +73,26 @@ void US_PD_eeconfig_init_kb_mem(void) {
 }
 
 void US_PD_pointing_device_init_kb(void) {
-    // set the CPI.
-    pointing_device_set_cpi(us_cpi_array[US_EECONFIG_get_pd_cpi_idx_from_mem()]);
     US_EECONFIG_keyboard_post_init_kb();
-    //set_auto_mouse_layer(4);
+}
+
+void US_PD_keyboard_post_init_kb(void) {
+    const uint8_t cpi_idx = US_EECONFIG_get_pd_cpi_idx_from_mem();
+    if (us_cpi_array_size <= cpi_idx) {
+        US_EECONFIG_update_pd_cpi_idx_to_eeprom(COCOT_CPI_DEFAULT);
+    }
+
+    const uint8_t scrl_div_idx = US_EECONFIG_get_pd_scrl_div_from_mem();
+    if (us_scrl_div_array_size <= scrl_div_idx) {
+        US_EECONFIG_update_pd_scrl_div_to_eeprom(COCOT_SCROLL_DIV_DEFAULT);
+    }
+
+    const uint8_t rotation_angle_idx = US_EECONFIG_get_pd_rotation_angle_from_mem();
+    if (us_angle_array_size <= rotation_angle_idx) {
+        US_EECONFIG_update_pd_rotation_angle_to_eeprom(COCOT_ROTATION_DEFAULT);
+    }
+
+    pointing_device_set_cpi(us_cpi_array[US_EECONFIG_get_pd_cpi_idx_from_mem()]);
     set_auto_mouse_enable(US_EECONFIG_get_pd_auto_mouse_from_mem());
 }
 
