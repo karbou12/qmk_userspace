@@ -5,6 +5,21 @@
 #pragma once
 #include "karbou12.h"
 
+#ifdef POINTING_DEVICE_ENABLE
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t cpi_idx;
+        uint8_t scrl_div;
+        uint8_t rotation_angle;
+        bool auto_mouse: 1;
+        bool scrl_inv: 1;
+    };
+} cocot_config_t;
+
+extern cocot_config_t us_cocot_config;
+#endif
+
 typedef enum {
     US_FIELD_LAYER0 = 0,
     US_FIELD_LAYER1,
@@ -30,21 +45,6 @@ typedef enum {
     US_FIELD_OS_IOS,
     US_FIELD_ALL
 } us_user_config_field_e;
-
-#ifdef POINTING_DEVICE_ENABLE
-typedef union {
-    uint32_t raw;
-    struct {
-        uint8_t cpi_idx;
-        uint8_t scrl_div;
-        uint8_t rotation_angle;
-        bool auto_mouse: 1;
-        bool scrl_inv: 1;
-    };
-} cocot_config_t;
-
-extern cocot_config_t us_cocot_config;
-#endif
 
 #if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 typedef struct PACKED {
