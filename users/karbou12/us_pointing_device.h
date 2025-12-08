@@ -6,21 +6,8 @@
 #include "karbou12.h"
 
 #ifdef POINTING_DEVICE_ENABLE
-typedef union {
-    uint32_t raw;
-    struct {
-        uint8_t cpi_idx;
-        uint8_t scrl_div;
-        uint8_t rotation_angle;
-        bool auto_mouse: 1;
-        bool scrl_inv: 1;
-    };
-} cocot_config_t;
-
-extern cocot_config_t us_cocot_config;
-
 extern void US_PD_matrix_init_kb(void);
-extern void US_PD_eeconfig_init_kb(void);
+extern void US_PD_eeconfig_init_kb_mem(void);
 extern void US_PD_pointing_device_init_kb(void);
 extern layer_state_t US_PD_layer_state_set_kb(layer_state_t state);
 extern bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record);

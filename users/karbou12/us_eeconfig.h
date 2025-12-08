@@ -31,6 +31,21 @@ typedef enum {
     US_FIELD_ALL
 } us_user_config_field_e;
 
+#ifdef POINTING_DEVICE_ENABLE
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t cpi_idx;
+        uint8_t scrl_div;
+        uint8_t rotation_angle;
+        bool auto_mouse: 1;
+        bool scrl_inv: 1;
+    };
+} cocot_config_t;
+
+extern cocot_config_t us_cocot_config;
+#endif
+
 #if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 typedef struct PACKED {
     hsv_t hsv;
@@ -104,6 +119,23 @@ extern void us_dump_eeconfig(const char* const func);
 #define US_DUMP_EECONFIG()
 #endif
 
+#ifdef POINTING_DEVICE_ENABLE
+extern uint8_t US_EECONFIG_get_pd_cpi_idx_from_mem(void);
+extern void US_EECONFIG_update_pd_cpi_idx_to_eeprom(const uint8_t cpi_idx);
+
+extern uint8_t US_EECONFIG_get_pd_scrl_div_from_mem(void);
+extern void US_EECONFIG_update_pd_scrl_div_to_eeprom(const uint8_t scrl_div);
+
+extern uint8_t US_EECONFIG_get_pd_rotation_angle_from_mem(void);
+extern void US_EECONFIG_update_pd_rotation_angle_to_eeprom(const uint8_t rotation_angle);
+
+extern bool US_EECONFIG_get_pd_auto_mouse_from_mem(void);
+extern void US_EECONFIG_update_pd_auto_mouse_to_eeprom(const bool auto_mouse);
+
+extern bool US_EECONFIG_get_pd_scrl_inv_from_mem(void);
+extern void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv);
+#endif
+
 #if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 extern const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field);
 extern void US_EECONFIG_update_hsvm_layer_to_eeprom(const us_user_config_field_e field, const us_hsvm_t* hsvm_layer);
@@ -121,6 +153,13 @@ extern void US_EECONFIG_update_retain_val_to_eeprom(const bool to_retain_val);
 #ifdef OS_DETECTION_ENABLE
 extern us_user_config_field_e US_EECONFIG_get_os_default_layer_from_mem(void);
 extern void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e field);
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+// override func
+extern void US_EECONFIG_eeconfig_init_kb(void);
+extern void US_EECONFIG_keyboard_post_init_kb(void);
+extern bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record);
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0

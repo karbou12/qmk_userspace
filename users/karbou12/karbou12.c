@@ -27,7 +27,14 @@ void matrix_init_kb(void) {
 }
 
 void eeconfig_init_kb(void) {
-    US_PD_eeconfig_init_kb();
+    // init global memory
+    US_PD_eeconfig_init_kb_mem();
+
+    US_DUMP_EECONFIG();
+
+    // store global memory into eeprom user datablock
+    US_EECONFIG_eeconfig_init_kb();
+
     eeconfig_init_user();
 }
 
@@ -43,6 +50,8 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
 
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     if (!process_record_user(keycode, record)) {
+        return false;
+    } else if (!US_EECONFIG_process_record_kb(keycode, record)) {
         return false;
     } else if (!US_PD_process_record_kb(keycode, record)) {
         return false;

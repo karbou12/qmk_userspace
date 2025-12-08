@@ -7,6 +7,10 @@
 #include "us_os.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
 
+#ifdef POINTING_DEVICE_ENABLE
+cocot_config_t us_cocot_config;
+#endif
+
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 us_user_config_t us_user_config = {0};
 #endif
@@ -21,6 +25,15 @@ static void parse_version(const uint32_t version, uint16_t* parsed_version) {
 }
 
 void us_dump_eeconfig(const char* const func) {
+#ifdef POINTING_DEVICE_ENABLE
+    parse_version(EECONFIG_KB_DATA_VERSION, version);
+    uprintf("------------------------------------------------------------\n");
+    uprintf("%s DUMP EEPROM KB DATA.\n",
+    uprintf("cpi_idx:%u, scrl_div:%u, rotation_angle:%u\n",
+             us_cocot_config.cpi_idx, us_cocot_config.scrl_div, us_cocot_config.rotation_angle);
+    uprintf("auto_mouse:%s\n", us_cocot_config.auto_mouse ? "true" : "false");
+    uprintf("scrl_inv:%s\n", us_cocot_config.scrl_inv ? "true" : "false");
+#endif
     uint16_t version[3] = {0};
     parse_version(EECONFIG_USER_DATA_VERSION, version);
     uprintf("------------------------------------------------------------\n");
@@ -68,6 +81,53 @@ static uint32_t us_get_offset(const us_user_config_field_e field) {
         default :
             return 0;
     }
+}
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+uint8_t US_EECONFIG_get_pd_cpi_idx_from_mem(void) {
+    return us_cocot_config.cpi_idx;
+}
+
+void US_EECONFIG_update_pd_cpi_idx_to_eeprom(const uint8_t cpi_idx) {
+    us_cocot_config.cpi_idx = cpi_idx;
+    eeconfig_update_kb(us_cocot_config.raw);
+}
+
+uint8_t US_EECONFIG_get_pd_scrl_div_from_mem(void) {
+    return us_cocot_config.scrl_div;
+}
+
+void US_EECONFIG_update_pd_scrl_div_to_eeprom(const uint8_t scrl_div) {
+    us_cocot_config.scrl_div = scrl_div;
+    eeconfig_update_kb(us_cocot_config.raw);
+}
+
+uint8_t US_EECONFIG_get_pd_rotation_angle_from_mem(void) {
+    return us_cocot_config.rotation_angle;
+}
+
+void US_EECONFIG_update_pd_rotation_angle_to_eeprom(const uint8_t rotation_angle) {
+    us_cocot_config.rotation_angle = rotation_angle;
+    eeconfig_update_kb(us_cocot_config.raw);
+}
+
+bool US_EECONFIG_get_pd_auto_mouse_from_mem(void) {
+    return us_cocot_config.auto_mouse;
+}
+
+void US_EECONFIG_update_pd_auto_mouse_to_eeprom(const bool auto_mouse) {
+    us_cocot_config.auto_mouse = auto_mouse;
+    eeconfig_update_kb(us_cocot_config.raw);
+}
+
+bool US_EECONFIG_get_pd_scrl_inv_from_mem(void) {
+    return us_cocot_config.scrl_inv;
+}
+
+void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
+    us_cocot_config.scrl_inv = scrl_inv;
+    eeconfig_update_kb(us_cocot_config.raw);
 }
 #endif
 
@@ -135,6 +195,28 @@ void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e 
     us_user_config.os.os_default_layer[os] = field;
     const us_user_config_field_e os_field = US_FIELD_OS_UNSURE + os;
     eeconfig_update_user_datablock(&field, us_get_offset(os_field), sizeof(field));
+}
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+void US_EECONFIG_eeconfig_init_kb(void) {
+    eeconfig_update_kb(us_cocot_config.raw);
+}
+
+void US_EECONFIG_keyboard_post_init_kb(void) {
+    us_cocot_config.raw = eeconfig_read_kb();
+}
+
+bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case USR_RESET:
+            if (record->event.pressed) {
+                eeconfig_init_kb();
+            }
+            return true;
+        default:
+            return true;
+    }
 }
 #endif
 
