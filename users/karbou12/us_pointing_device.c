@@ -161,9 +161,7 @@ bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record) {
             break;
 
         case SCRL_MO:
-            if (keycode == SCRL_MO) {
-                us_is_scrl_mode ^= 1;
-            }
+            us_is_scrl_mode ^= 1;
             break;
 
         case SCRL_TO:
