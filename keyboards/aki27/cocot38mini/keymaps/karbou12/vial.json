@@ -1,7 +1,6 @@
 {
   "name": "cocot38mini",
-  "vendorId": "0x1727",
-  "productId": "0x0011",
+  "manifacture": "aki27",
   "lighting": "qmk_rgblight",
   "matrix": { "rows":4, "cols": 10 },
   "customKeycodes": [
