@@ -15,7 +15,7 @@ enum custom_keycodes {
     SCRL_IN,
     AM_TOG,
 #endif
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     USR_RGB_LAYER_TOG,
     USR_RGB_RETAIN_VAL_TOG,
     USR_RGB_LAYER_HUE_UP,

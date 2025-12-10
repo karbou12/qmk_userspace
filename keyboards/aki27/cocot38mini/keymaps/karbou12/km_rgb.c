@@ -1,7 +1,7 @@
 #include "quantum.h"
 #include "us_rgb.h"
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 const hsv_t PROGMEM km_hsv_layer0[] = HSV_LAYER_SEGMENTS({HSV_CYAN});
 const hsv_t PROGMEM km_hsv_layer1[] = HSV_LAYER_SEGMENTS({HSV_YELLOW});
 const hsv_t PROGMEM km_hsv_layer2[] = HSV_LAYER_SEGMENTS({HSV_GREEN});

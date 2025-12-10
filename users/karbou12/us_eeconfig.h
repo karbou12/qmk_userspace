@@ -63,7 +63,7 @@ typedef enum {
     US_FIELD_ALL
 } us_user_config_field_e;
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 typedef struct PACKED {
     hsv_t hsv;
     uint8_t mode;
@@ -98,7 +98,7 @@ typedef struct PACKED {
 #endif
 
 typedef struct PACKED {
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     us_rgb_config_t_v1 rgb;
 #endif
 #ifdef OS_DETECTION_ENABLE
@@ -108,7 +108,7 @@ typedef struct PACKED {
 #define US_BASE_FW_VER_OF_USER_CONFIG_V1 US_CONCAT_VER(0, 0, 5)
 
 typedef struct PACKED {
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     us_rgb_config_t_v2 rgb;
 #endif
 #ifdef OS_DETECTION_ENABLE
@@ -153,7 +153,7 @@ extern bool US_EECONFIG_get_pd_scrl_inv_from_mem(void);
 extern void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv);
 #endif
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 extern const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field);
 extern void US_EECONFIG_update_hsvm_layer_to_eeprom(const us_user_config_field_e field, const us_hsvm_t* hsvm_layer);
 

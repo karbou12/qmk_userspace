@@ -45,7 +45,7 @@ void us_dump_eeconfig(const char* const func) {
     uprintf("%s DUMP EEPROM USER DATA. ver:%04x (%u.%u.%u), size:%u, defined size:%u\n",
             func, EECONFIG_USER_DATA_VERSION, version[2], version[1], version[0],
             sizeof(us_user_config), EECONFIG_USER_DATA_SIZE);
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     us_hsvm_t* p = us_user_config.rgb.hsvm_layer;
     for (uint8_t i = 0; i < ARRAY_SIZE(us_user_config.rgb.hsvm_layer); i++, p++) {
         uprintf("id:%u, hue:%u, sat:%u, val:%u, mode:%u\n", i, p->hsv.h, p->hsv.s, p->hsv.v, p->mode);
@@ -64,10 +64,10 @@ void us_dump_eeconfig(const char* const func) {
 }
 #endif
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE) || defined(OS_DETECTION_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX) || defined(OS_DETECTION_ENABLE)
 static uint32_t us_get_offset(const us_user_config_field_e field) {
     switch (field) {
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
         case US_FIELD_LAYER0 ... (ARRAY_SIZE(us_user_config.rgb.hsvm_layer) - 1):
             return sizeof(us_hsvm_t) * field;
         case US_FIELD_FLAGS:
@@ -75,7 +75,7 @@ static uint32_t us_get_offset(const us_user_config_field_e field) {
 #endif
 #ifdef OS_DETECTION_ENABLE
         case US_FIELD_OS_UNSURE ... US_FIELD_OS_IOS:
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
             return sizeof(us_hsvm_t) * ARRAY_SIZE(us_user_config.rgb.hsvm_layer) +
                    sizeof(uint8_t) +
                    sizeof(us_user_config_field_e) * (field - US_FIELD_OS_UNSURE);
@@ -136,7 +136,7 @@ void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
 }
 #endif
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field) {
     if (sizeof(us_user_config.rgb.hsvm_layer) <= field) {
         return NULL;
@@ -305,7 +305,7 @@ bool US_EECONFIG_migrate_user_datablock(void) {
     }
 
     // migrate global memory
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_eeconfig_migrate_mem(&us_user_config_bk, prev_ver);
 #endif
 #ifdef OS_DETECTION_ENABLE

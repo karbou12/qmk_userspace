@@ -37,6 +37,6 @@ extern void caps_word_set_user(bool active);
 extern bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record);
 #endif
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max);
 #endif

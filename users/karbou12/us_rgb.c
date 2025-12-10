@@ -9,7 +9,7 @@
 #include <lib/lib8tion/lib8tion.h>
 #include <limits.h>
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
 extern uint16_t g_us_vial_keycode16;
@@ -18,7 +18,7 @@ extern uint16_t g_us_vial_keycode16;
 static bool us_is_keyboard_post_init_user_called = false;
 static bool us_is_key_pressed_to_skip_rec_rgb = false;
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 static uint8_t us_led_min = 0;
 static uint8_t us_led_max = 0;
 #endif
@@ -30,7 +30,7 @@ static const rgblight_segment_t * const PROGMEM df_blink_layers[] = RGBLIGHT_LAY
 );
 #endif
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 #define GET_LIMITED_RGB_VAL(v) (v < RGB_MATRIX_MAXIMUM_BRIGHTNESS) ? v : RGB_MATRIX_MAXIMUM_BRIGHTNESS
 #define GET_STATIC_MODE() RGB_MATRIX_SOLID_COLOR
 #else
@@ -39,7 +39,7 @@ static const rgblight_segment_t * const PROGMEM df_blink_layers[] = RGBLIGHT_LAY
 #endif
 
 static bool us_is_rgb_enabled(void) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     return rgb_matrix_is_enabled();
 #else
     return rgblight_is_enabled();
@@ -47,7 +47,7 @@ static bool us_is_rgb_enabled(void) {
 }
 
 static void us_rgb_enable_noeeprom(void) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     rgb_matrix_enable_noeeprom();
 #else
     rgblight_enable_noeeprom();
@@ -55,7 +55,7 @@ static void us_rgb_enable_noeeprom(void) {
 }
 
 static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uint8_t val, uint8_t mode) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     if (us_led_max == 0) {
         return;
     }
@@ -130,7 +130,7 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field) {
         return;
     }
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     US_EECONFIG_update_hsvm_layer_to_eeprom(field, p);
 #else
     us_hsvm_t cur_hsvm = {.hsv.h = rgblight_get_hue(), .hsv.s = rgblight_get_sat(),
@@ -153,13 +153,13 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field) {
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
 static void us_update_hue(const bool is_increase) {
     if (is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_increase_hue();
 #else
         rgblight_increase_hue();
 #endif
     } else {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_decrease_hue();
 #else
         rgblight_decrease_hue();
@@ -169,13 +169,13 @@ static void us_update_hue(const bool is_increase) {
 
 static void us_update_sat(const bool is_increase) {
     if (is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_increase_sat();
 #else
         rgblight_increase_sat();
 #endif
     } else {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_decrease_sat();
 #else
         rgblight_decrease_sat();
@@ -185,13 +185,13 @@ static void us_update_sat(const bool is_increase) {
 
 static void us_update_val(const bool is_increase) {
     if (is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_increase_val();
 #else
         rgblight_increase_val();
 #endif
     } else {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
         rgb_matrix_decrease_val();
 #else
         rgblight_decrease_val();
@@ -201,7 +201,7 @@ static void us_update_val(const bool is_increase) {
 #endif
 
 static void us_update_hue_noeeprom(const bool is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
@@ -223,7 +223,7 @@ static void us_update_hue_noeeprom(const bool is_increase) {
 }
 
 static void us_update_sat_noeeprom(const bool is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
@@ -245,7 +245,7 @@ static void us_update_sat_noeeprom(const bool is_increase) {
 }
 
 static void us_update_val_noeeprom(const bool is_increase) {
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
@@ -286,7 +286,7 @@ void US_RGB_eeconfig_init_mem(void) {
 
     us_user_config.rgb.flag_raw = 0u;
     us_user_config.rgb.flags.is_rgb_per_layer = true;
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
     us_user_config.rgb.flags.is_auto_save_rgb = false;
 #else
     us_user_config.rgb.flags.is_auto_save_rgb = true;
@@ -347,7 +347,7 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
     uprintf("%s def:%u, layer_state:%u, state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state), get_highest_layer(state));
 #endif
 
-#ifndef RGB_MATRIX_ENABLE
+#ifndef CUSTOM_RGBMATRIX
     // store rgblight automatically if it is changed on vial.
     if (get_highest_layer(state) == 0 && get_highest_layer(layer_state) == 0 && get_highest_layer(default_layer_state) == 0) {
         us_record_rgb_on_layer_of(US_FIELD_LAYER0);
@@ -405,7 +405,7 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
     uprintf("%s def:%u, layer_state:%u, state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state), get_highest_layer(state));
 #endif
 
-#ifndef RGB_MATRIX_ENABLE
+#ifndef CUSTOM_RGBMATRIX
     // store rgblight automatically if it is changed on vial.
     if (get_highest_layer(layer_state) == 0 && get_highest_layer(default_layer_state) == 0) {
         us_record_rgb_on_layer_of(US_FIELD_LAYER0);
@@ -462,7 +462,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                     default:
                         break;
                 }
-#ifndef RGB_MATRIX_ENABLE
+#ifndef CUSTOM_RGBMATRIX
                 if (us_is_rgb_enabled()) {
                     us_record_rgb_on_layer_of(US_FIELD_LAYER0);
                     us_is_key_pressed_to_skip_rec_rgb = true;
@@ -600,7 +600,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
-#ifndef RGB_MATRIX_ENABLE
+#ifndef CUSTOM_RGBMATRIX
         case USR_RGB_AUTO_SAVE_TOG:
             if (us_is_rgb_per_layer_enabled(record)) {
                 const bool cur_flag = US_EECONFIG_get_auto_save_rgb_from_mem();
@@ -630,7 +630,7 @@ void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
 
         case UG_NEXT ... RGB_M_TW:
-#ifndef RGB_MATRIX_ENABLE
+#ifndef CUSTOM_RGBMATRIX
             if (us_is_rgb_enabled()) {
                 us_record_rgb_on_layer_of(US_FIELD_LAYER0);
                 us_is_key_pressed_to_skip_rec_rgb = true;
@@ -679,7 +679,7 @@ void US_RGB_caps_word_set_user(bool active) {
 }
 #endif
 
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (!us_is_keyboard_post_init_user_called) {
         return true;

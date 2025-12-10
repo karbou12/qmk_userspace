@@ -26,7 +26,7 @@ ifeq ($(strip $(CUSTOM_RGBLIGHT)), yes)
 endif
 
 ifeq ($(strip $(CUSTOM_RGBMATRIX)), yes)
-	OPT_DEFS += -DRGB_MATRIX_ENABLE
+	OPT_DEFS += -DRGB_MATRIX_ENABLE -DCUSTOM_RGBMATRIX
 	SRC += $(USER_PATH)/us_rgb.c
 endif
 

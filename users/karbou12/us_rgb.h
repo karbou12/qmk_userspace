@@ -4,7 +4,7 @@
 #include "karbou12.h"
 #include "us_eeconfig.h"
 
-#if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 #define HSV_LAYER_END_SEGMENTS {0, 0, 0}
 #define HSV_LAYER_SEGMENTS(...) \
         { __VA_ARGS__, HSV_LAYER_END_SEGMENTS }
@@ -39,7 +39,7 @@ extern void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *recor
 #ifdef CAPS_WORD_ENABLE
 extern void US_RGB_caps_word_set_user(bool active);
 #endif
-#ifdef RGB_MATRIX_ENABLE
+#ifdef CUSTOM_RGBMATRIX
 extern bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max);
 #endif
 #endif
