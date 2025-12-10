@@ -7,6 +7,7 @@
 #include "us_utils.h"
 #include "us_status.h"
 #include <lib/lib8tion/lib8tion.h>
+#include <limits.h>
 
 #if defined(RGBLIGHT_LAYERS) || defined(RGB_MATRIX_ENABLE)
 
@@ -683,8 +684,8 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
     if (!us_is_keyboard_post_init_user_called) {
         return true;
     }
-    us_led_min = led_min;
-    us_led_max = led_max;
+    us_led_min = MIN(us_led_min, led_min);
+    us_led_max = MAX(us_led_max, led_max);
 
     us_is_key_pressed_to_skip_rec_rgb = false;
 
@@ -702,8 +703,14 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
         use_val = p_layer0->hsv.v;
     }
 
-    us_set_hsvm_noeeprom(p_capsword ? p_capsword->h : p->hsv.h, p_capsword ? p_capsword->s : p->hsv.s,
-            GET_LIMITED_RGB_VAL(use_val), GET_STATIC_MODE());
+    const hsv_t hsv = {p_capsword ? p_capsword->h : p->hsv.h, p_capsword ? p_capsword->s : p->hsv.s, use_val};
+    const rgb_t rgb = hsv_to_rgb(hsv);
+
+    for (uint8_t i = led_min; i < led_max; i++) {
+        if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+        }
+    }
 
     return false;
 };
