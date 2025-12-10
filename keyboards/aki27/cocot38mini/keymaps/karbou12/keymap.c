@@ -104,9 +104,9 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [1] = ENCODER_MAC_ZOOM,
     [2] = ENCODER_BRIGHT,
     [3] = ENCODER_VOL,
-    [4] = ENCODER_MS_WHEEL,
-    [5] = ENCODER_WIN_ZOOM,
-    [6] = ENCODER_BRIGHT,
-    [7] = ENCODER_VOL,
+    [4] = ENCODER_NO,
+    [5] = ENCODER_NO,
+    [6] = ENCODER_NO,
+    [7] = ENCODER_NO,
 };
 #endif
