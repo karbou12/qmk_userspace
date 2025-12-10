@@ -64,7 +64,7 @@ static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uin
     const rgb_t rgb = hsv_to_rgb(hsv);
 
     for (uint8_t i = us_led_min; i < us_led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }
@@ -707,7 +707,7 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
     const rgb_t rgb = hsv_to_rgb(hsv);
 
     for (uint8_t i = led_min; i < led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }
