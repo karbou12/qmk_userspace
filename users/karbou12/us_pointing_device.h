@@ -7,6 +7,13 @@
 #include "us_eeconfig.h"
 
 #ifdef POINTING_DEVICE_ENABLE
+#ifndef SCRL_MODE_LAYER_BEGIN
+#define SCRL_MODE_LAYER_BEGIN 1
+#endif
+#ifndef SCRL_MODE_LAYER_END
+#define SCRL_MODE_LAYER_END 2
+#endif
+
 extern void US_PD_eeconfig_migrate_kb_mem(const us_kb_config_u* bk, const uint32_t prev_ver);
 extern void US_PD_matrix_init_kb(void);
 extern void US_PD_eeconfig_init_kb_mem(void);

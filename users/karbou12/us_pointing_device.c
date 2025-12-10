@@ -115,12 +115,12 @@ void US_PD_keyboard_post_init_kb(void) {
 
 layer_state_t US_PD_layer_state_set_kb(layer_state_t state) {
     switch(get_highest_layer(remove_auto_mouse_layer(state, true))) {
-        case 1 ... 2:
+        case SCRL_MODE_LAYER_BEGIN ... SCRL_MODE_LAYER_END:
             us_is_scrl_mode = true;
             state = remove_auto_mouse_layer(state, false);
             set_auto_mouse_enable(false);
             break;
-        case 3 ... 7:
+        case SCRL_MODE_LAYER_END + 1 ... DYNAMIC_KEYMAP_LAYER_COUNT - 1:
             us_is_scrl_mode = false;
             break;
         default:
