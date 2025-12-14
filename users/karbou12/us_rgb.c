@@ -200,19 +200,36 @@ static void us_update_val(const bool is_increase) {
 }
 #endif
 
-static void us_update_hue_noeeprom(const bool is_increase) {
 #ifdef CUSTOM_RGBMATRIX
+typedef enum {
+    US_HUE = 0,
+    US_SAT,
+    US_VAL
+} us_hsv_e;
+
+static void us_update_hsv_noeeprom_for_rgb_matrix(const bool is_increase, const us_hsv_e type) {
     const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
         return;
     }
 
-    us_hsvm_t new_hsvm = {.hsv.h = is_increase ? p->hsv.h + RGB_MATRIX_HUE_STEP : p->hsv.h - RGB_MATRIX_HUE_STEP,
-                          .hsv.s = p->hsv.s,
-                          .hsv.v = p->hsv.v,
-                          .mode = p->mode};
+    us_hsvm_t new_hsvm = {
+        .hsv.h = (type != US_HUE) ? p->hsv.h
+               : is_increase ? p->hsv.h + RGB_MATRIX_HUE_STEP : p->hsv.h - RGB_MATRIX_HUE_STEP,
+        .hsv.s = (type != US_SAT) ? p->hsv.s
+               : is_increase ? qadd8(p->hsv.s, RGB_MATRIX_SAT_STEP) : qsub8(p->hsv.s, RGB_MATRIX_SAT_STEP),
+        .hsv.v = (type != US_VAL) ? p->hsv.v
+               : is_increase ? qadd8(p->hsv.v, RGB_MATRIX_VAL_STEP) : qsub8(p->hsv.v, RGB_MATRIX_VAL_STEP),
+        .mode = p->mode};
+
     US_EECONFIG_update_hsvm_layer_to_eeprom(field, &new_hsvm);
+}
+#endif
+
+static void us_update_hue_noeeprom(const bool is_increase) {
+#ifdef CUSTOM_RGBMATRIX
+    us_update_hsv_noeeprom_for_rgb_matrix(is_increase, US_HUE);
 #else
     if (is_increase) {
         rgblight_increase_hue_noeeprom();
@@ -224,17 +241,7 @@ static void us_update_hue_noeeprom(const bool is_increase) {
 
 static void us_update_sat_noeeprom(const bool is_increase) {
 #ifdef CUSTOM_RGBMATRIX
-    const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
-    const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
-    if (!p) {
-        return;
-    }
-
-    us_hsvm_t new_hsvm = {.hsv.h = p->hsv.h,
-                          .hsv.s = is_increase ? qadd8(p->hsv.s, RGB_MATRIX_SAT_STEP) : qsub8(p->hsv.s, RGB_MATRIX_SAT_STEP),
-                          .hsv.v = p->hsv.v,
-                          .mode = p->mode};
-    US_EECONFIG_update_hsvm_layer_to_eeprom(field, &new_hsvm);
+    us_update_hsv_noeeprom_for_rgb_matrix(is_increase, US_SAT);
 #else
     if (is_increase) {
         rgblight_increase_sat_noeeprom();
@@ -246,17 +253,7 @@ static void us_update_sat_noeeprom(const bool is_increase) {
 
 static void us_update_val_noeeprom(const bool is_increase) {
 #ifdef CUSTOM_RGBMATRIX
-    const us_user_config_field_e field = US_UTIL_get_current_layer(layer_state);
-    const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
-    if (!p) {
-        return;
-    }
-
-    us_hsvm_t new_hsvm = {.hsv.h = p->hsv.h,
-                          .hsv.s = p->hsv.s,
-                          .hsv.v = is_increase ? qadd8(p->hsv.v, RGB_MATRIX_VAL_STEP) : qsub8(p->hsv.v, RGB_MATRIX_VAL_STEP),
-                          .mode = p->mode};
-    US_EECONFIG_update_hsvm_layer_to_eeprom(field, &new_hsvm);
+    us_update_hsv_noeeprom_for_rgb_matrix(is_increase, US_VAL);
 #else
     if (is_increase) {
         rgblight_increase_val_noeeprom();
