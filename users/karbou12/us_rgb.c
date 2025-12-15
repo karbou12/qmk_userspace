@@ -220,7 +220,7 @@ static void us_update_hsv_noeeprom_for_rgb_matrix(const bool is_increase, const 
         .hsv.s = (type != US_SAT) ? p->hsv.s
                : is_increase ? qadd8(p->hsv.s, RGB_MATRIX_SAT_STEP) : qsub8(p->hsv.s, RGB_MATRIX_SAT_STEP),
         .hsv.v = (type != US_VAL) ? p->hsv.v
-               : is_increase ? qadd8(p->hsv.v, RGB_MATRIX_VAL_STEP) : qsub8(p->hsv.v, RGB_MATRIX_VAL_STEP),
+               : is_increase ? GET_LIMITED_RGB_VAL(qadd8(p->hsv.v, RGB_MATRIX_VAL_STEP)) : qsub8(p->hsv.v, RGB_MATRIX_VAL_STEP),
         .mode = p->mode};
 
     US_EECONFIG_update_hsvm_layer_to_eeprom(field, &new_hsvm);
