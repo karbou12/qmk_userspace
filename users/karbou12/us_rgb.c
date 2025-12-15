@@ -54,7 +54,7 @@ static void us_rgb_enable_noeeprom(void) {
 #endif
 }
 
-static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uint8_t val, uint8_t mode) {
+static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uint8_t val, uint8_t mode, const bool is_for_key) {
 #ifdef CUSTOM_RGBMATRIX
     if (us_led_max == 0) {
         return;
@@ -63,8 +63,9 @@ static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uin
     const hsv_t hsv = {hue, sat, val};
     const rgb_t rgb = hsv_to_rgb(hsv);
 
+    const uint8_t led_flag = is_for_key ? LED_FLAG_KEYLIGHT : LED_FLAG_UNDERGLOW;
     for (uint8_t i = us_led_min; i < us_led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+        if (HAS_FLAGS(g_led_config.flags[i], led_flag)) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }
@@ -105,7 +106,11 @@ static void us_set_rgb_on_layer_of(const us_user_config_field_e field) {
     uprintf("%s, field:%u, hue:%u, sat:%u, val:%u\n", __FUNCTION__, field, p->hsv.h, p->hsv.s, use_val);
 #endif
 
-    us_set_hsvm_noeeprom(p->hsv.h, p->hsv.s, use_val, p->mode);
+#ifdef CUSTOM_RGBMATRIX
+    us_set_hsvm_noeeprom(p->hsv.h, p->hsv.s, use_val, p->mode, US_EECONFIG_get_rgb_per_layer_from_mem());
+#else
+    us_set_hsvm_noeeprom(p->hsv.h, p->hsv.s, use_val, p->mode, true);
+#endif
 }
 
 static void us_record_rgb_on_layer_of(const us_user_config_field_e field) {
@@ -282,7 +287,11 @@ void US_RGB_eeconfig_init_mem(void) {
     }
 
     us_user_config.rgb.flag_raw = 0u;
-    us_user_config.rgb.flags.is_rgb_per_layer = true;
+#ifdef CUSTOM_RGBMATRIX
+    us_user_config.rgb.flags.is_rgb_per_layer = false; // underglow
+#else
+    us_user_config.rgb.flags.is_rgb_per_layer = true; // keylight
+#endif
 #ifdef CUSTOM_RGBMATRIX
     us_user_config.rgb.flags.is_auto_save_rgb = false;
 #else
@@ -666,7 +675,11 @@ void US_RGB_caps_word_set_user(bool active) {
 
         const hsv_t* const cur_seg = km_hsv_capsword;
         us_set_hsvm_noeeprom(cur_seg->h, cur_seg->s, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v,
-                GET_STATIC_MODE());
+#ifdef CUSTOM_RGBMATRIX
+                GET_STATIC_MODE(), US_EECONFIG_get_rgb_per_layer_from_mem());
+#else
+                GET_STATIC_MODE(), true);
+#endif
     } else {
 #ifdef CONSOLE_ENABLE
         uprintf("%s, inactive def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
@@ -702,9 +715,10 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
 
     const hsv_t hsv = {p_capsword ? p_capsword->h : p->hsv.h, p_capsword ? p_capsword->s : p->hsv.s, use_val};
     const rgb_t rgb = hsv_to_rgb(hsv);
+    const uint8_t led_flag = US_EECONFIG_get_rgb_per_layer_from_mem() ? LED_FLAG_KEYLIGHT : LED_FLAG_UNDERGLOW;
 
     for (uint8_t i = led_min; i < led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+        if (HAS_FLAGS(g_led_config.flags[i], led_flag)) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }
