@@ -273,10 +273,15 @@ static void us_update_val_noeeprom(const bool is_increase) {
 }
 
 static bool us_is_rgb_per_layer_enabled(keyrecord_t *record) {
+#ifdef CUSTOM_RGBMATRIX
+    const bool is_rgb_per_layer = true;
+#else
+    const bool is_rgb_per_layer = US_EECONFIG_get_rgb_per_layer_from_mem();
+#endif
     if (record) {
-        return (record->event.pressed && us_is_rgb_enabled() && US_EECONFIG_get_rgb_per_layer_from_mem());
+        return (record->event.pressed && us_is_rgb_enabled() && is_rgb_per_layer);
     } else {
-        return (us_is_rgb_enabled() && US_EECONFIG_get_rgb_per_layer_from_mem());
+        return (us_is_rgb_enabled() && is_rgb_per_layer);
     }
 }
 
