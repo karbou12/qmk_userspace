@@ -733,13 +733,11 @@ void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
-        case UG_NEXT ... RGB_M_TW:
-#ifndef CUSTOM_RGBMATRIX
+        case UG_NEXT ... RM_SPDD:
             if (us_is_rgb_enabled()) {
                 us_record_rgb_on_layer_of(US_FIELD_LAYER0, US_REC_EEPROM);
                 us_is_key_pressed_to_skip_rec_rgb = true;
             }
-#endif
             break;
 
         case USR_RGB_LAYER_HUE_UP:
