@@ -207,7 +207,7 @@ void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e 
 bool US_EECONFIG_migrate_kb_datablock(void) {
     const uint32_t prev_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
 
-    if (prev_ver < US_BASE_FW_VER_OF_USER_CONFIG_V1) {
+    if (prev_ver < US_BASE_FW_VER_OF_KB_CONFIG_V1) {
 #ifdef CONSOLE_ENABLE
         uprintf("%s : it may be the first vial install or very early version is installed.\n", __FUNCTION__);
 #endif
