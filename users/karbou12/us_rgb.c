@@ -101,12 +101,22 @@ static void us_set_rgb_on_layer_of_common(const us_user_config_field_e field, co
         use_val = p_layer0->hsv.v;
     }
 
-    US_DUMP_EECONFIG();
-#ifdef CONSOLE_ENABLE
-    uprintf("%s, field:%u, hue:%u, sat:%u, val:%u\n", __FUNCTION__, field, p->hsv.h, p->hsv.s, use_val);
+    uint8_t use_mode = p->mode;
+#ifdef CUSTOM_RGBMATRIX
+    if (field != US_FIELD_LAYER_RM && use_mode == GET_STATIC_MODE()) {
+        const us_hsvm_t* p_rm = US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER_RM);
+        if (p_rm) {
+            use_mode = p_rm->mode;
+        }
+    }
 #endif
 
-    us_set_hsvm_noeeprom(p->hsv.h, p->hsv.s, use_val, p->mode, is_for_key);
+    US_DUMP_EECONFIG();
+#ifdef CONSOLE_ENABLE
+    uprintf("%s, field:%u, hue:%u, sat:%u, val:%u, mode:%u\n", __FUNCTION__, field, p->hsv.h, p->hsv.s, use_val, use_mode);
+#endif
+
+    us_set_hsvm_noeeprom(p->hsv.h, p->hsv.s, use_val, use_mode, is_for_key);
 }
 
 static void us_set_rgb_on_layer_of(const us_user_config_field_e field) {
@@ -796,7 +806,7 @@ void US_RGB_caps_word_set_user(bool active) {
         const hsv_t* const cur_seg = km_hsv_capsword;
         us_set_hsvm_noeeprom(cur_seg->h, cur_seg->s, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v,
 #ifdef CUSTOM_RGBMATRIX
-                GET_STATIC_MODE(), US_EECONFIG_get_rgb_per_layer_from_mem());
+                rgb_matrix_get_mode(), US_EECONFIG_get_rgb_per_layer_from_mem());
 #else
                 GET_STATIC_MODE(), true);
 #endif
@@ -856,9 +866,9 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
     const rgb_t ug_rgb = hsv_to_rgb(ug_hsv);
 
     for (uint8_t i = led_min; i < led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
+        if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT) && p_key->mode == GET_STATIC_MODE()) {
             rgb_matrix_set_color(i, key_rgb.r, key_rgb.g, key_rgb.b);
-        } else if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+        } else if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW) && p_ug->mode == GET_STATIC_MODE()) {
             rgb_matrix_set_color(i, ug_rgb.r, ug_rgb.g, ug_rgb.b);
         }
     }
