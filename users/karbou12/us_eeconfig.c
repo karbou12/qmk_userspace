@@ -53,7 +53,11 @@ void us_dump_eeconfig(const char* const func) {
 #ifdef CUSTOM_RGBMATRIX
     uprintf("rm, hue:%u, sat:%u, val:%u, mode:%u\n", rgb_matrix_get_hue(), rgb_matrix_get_sat(), rgb_matrix_get_val(), rgb_matrix_get_mode());
 #endif
+#ifdef CUSTOM_RGBMATRIX
+    uprintf("is_rgb_per_layer:%s\n", us_user_config.rgb.flags.is_rgb_per_layer ? "keylight" : "underglow");
+#else
     uprintf("is_rgb_per_layer:%s\n", us_user_config.rgb.flags.is_rgb_per_layer ? "true" : "false");
+#endif
     uprintf("is_auto_save_rgb:%s\n", us_user_config.rgb.flags.is_auto_save_rgb ? "true" : "false");
     uprintf("to_retain_val:%s\n", us_user_config.rgb.flags.to_retain_val ? "true" : "false");
 #endif
