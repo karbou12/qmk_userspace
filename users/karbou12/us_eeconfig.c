@@ -138,6 +138,17 @@ void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
 
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field) {
+#ifdef CUSTOM_RGBMATRIX
+    static us_hsvm_t rm_hsvm;
+    if (field == US_FIELD_LAYER_RM) {
+        rm_hsvm.hsv.h = rgb_matrix_get_hue();
+        rm_hsvm.hsv.s = rgb_matrix_get_sat();
+        rm_hsvm.hsv.v = rgb_matrix_get_val();
+        rm_hsvm.mode = rgb_matrix_get_mode();
+        return &rm_hsvm;
+    }
+#endif
+
     if (sizeof(us_user_config.rgb.hsvm_layer) <= field) {
         return NULL;
     }

@@ -14,6 +14,10 @@
 extern const hsv_t km_hsv_capsword[];
 extern const hsv_t * const km_hsv_layers[];
 
+#ifdef CUSTOM_RGBMATRIX
+extern const hsv_t km_hsv_matrix_layer[];
+#endif
+
 #ifdef RGBLIGHT_LAYER_BLINK
 extern const rgblight_segment_t km_reset_layer[];
 extern const rgblight_segment_t km_turn_on_layer[];

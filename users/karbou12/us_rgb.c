@@ -139,6 +139,12 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
 
     US_DUMP_EECONFIG();
 
+#ifdef CUSTOM_RGBMATRIX
+    if (field == US_FIELD_LAYER_RM) {
+        return;
+    }
+#endif
+
     const us_hsvm_t* p = US_EECONFIG_get_hsvm_layer_from_mem(field);
     if (!p) {
         return;
@@ -326,6 +332,12 @@ void US_RGB_eeconfig_init_mem(void) {
     us_user_config.rgb.flags.is_auto_save_rgb = true;
 #endif
     us_user_config.rgb.flags.to_retain_val = true;
+
+#ifdef CUSTOM_RGBMATRIX
+    const hsv_t* const rm_seg = km_hsv_matrix_layer;
+    rgb_matrix_sethsv(rm_seg->h, rm_seg->s, GET_LIMITED_RGB_VAL(rm_seg->v));
+    rgb_matrix_mode(GET_STATIC_MODE());
+#endif
 }
 
 void US_RGB_eeconfig_migrate_mem(const us_user_config_u* bk, const uint32_t prev_ver) {
@@ -366,7 +378,9 @@ void US_RGB_keyboard_post_init_user(void) {
 #ifdef CUSTOM_RGBMATRIX
     if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
         us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
+        us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
     } else {
+        us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
         us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
     }
 #else
@@ -422,9 +436,9 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
 #ifdef CUSTOM_RGBMATRIX
             if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
                 us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-                us_set_ug_on_layer_of(US_FIELD_LAYER0);
+                us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
             } else {
-                us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+                us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
                 us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
             }
 #else
@@ -434,9 +448,9 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
 #ifdef CUSTOM_RGBMATRIX
             if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
                 us_set_rgb_on_layer_of(field);
-                us_set_ug_on_layer_of(US_FIELD_LAYER0);
+                us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
             } else {
-                us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+                us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
                 us_set_ug_on_layer_of(field);
             }
 #else
@@ -483,9 +497,9 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
 #ifdef CUSTOM_RGBMATRIX
     if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
         us_set_rgb_on_layer_of(US_UTIL_get_current_layer(state));
-        us_set_ug_on_layer_of(US_FIELD_LAYER0);
+        us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
     } else {
-        us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+        us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
         us_set_ug_on_layer_of(US_UTIL_get_current_layer(state));
     }
 #else
@@ -539,7 +553,11 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                         break;
                 }
                 if (us_is_rgb_enabled()) {
+#ifdef CUSTOM_RGBMATRIX
+                    us_record_rgb_on_layer_of(US_FIELD_LAYER_RM, US_REC_EEPROM);
+#else
                     us_record_rgb_on_layer_of(US_FIELD_LAYER0, US_REC_EEPROM);
+#endif
                     us_is_key_pressed_to_skip_rec_rgb = true;
                 }
                 return true;
@@ -600,9 +618,9 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CUSTOM_RGBMATRIX
                 if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
                     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-                    us_set_ug_on_layer_of(US_FIELD_LAYER0);
+                    us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
                 } else {
-                    us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+                    us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
                     us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
                 }
 #else
@@ -624,9 +642,9 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CUSTOM_RGBMATRIX
                 if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
                     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-                    us_set_ug_on_layer_of(US_FIELD_LAYER0);
+                    us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
                 } else {
-                    us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+                    us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
                     us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
                 }
 #else
@@ -650,9 +668,9 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CUSTOM_RGBMATRIX
                 if (next_flag) {
                     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-                    us_set_ug_on_layer_of(US_FIELD_LAYER0);
+                    us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
                 } else {
-                    us_set_rgb_on_layer_of(US_FIELD_LAYER0);
+                    us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
                     us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
                 }
 #else
@@ -735,7 +753,11 @@ void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case UG_NEXT ... RM_SPDD:
             if (us_is_rgb_enabled()) {
+#ifdef CUSTOM_RGBMATRIX
+                us_record_rgb_on_layer_of(US_FIELD_LAYER_RM, US_REC_EEPROM);
+#else
                 us_record_rgb_on_layer_of(US_FIELD_LAYER0, US_REC_EEPROM);
+#endif
                 us_is_key_pressed_to_skip_rec_rgb = true;
             }
             break;
@@ -807,13 +829,13 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
 
     const hsv_t* const p_capsword = is_caps_word_on() ? km_hsv_capsword : NULL;
 
-    const us_user_config_field_e key_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_UTIL_get_current_layer(layer_state) : US_FIELD_LAYER0;
+    const us_user_config_field_e key_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_UTIL_get_current_layer(layer_state) : US_FIELD_LAYER_RM;
     const us_hsvm_t* p_key = US_EECONFIG_get_hsvm_layer_from_mem(key_field);
     if (!p_key) {
         return true;
     }
 
-    const us_user_config_field_e ug_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_FIELD_LAYER0 : US_UTIL_get_current_layer(layer_state);
+    const us_user_config_field_e ug_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_FIELD_LAYER_RM : US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p_ug = US_EECONFIG_get_hsvm_layer_from_mem(ug_field);
     if (!p_ug) {
         return true;

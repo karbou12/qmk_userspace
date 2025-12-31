@@ -10,6 +10,7 @@ const hsv_t PROGMEM km_hsv_layer4[] = HSV_LAYER_SEGMENTS({HSV_MAGENTA});
 const hsv_t PROGMEM km_hsv_layer5[] = HSV_LAYER_SEGMENTS({HSV_PURPLE});
 const hsv_t PROGMEM km_hsv_layer6[] = HSV_LAYER_SEGMENTS({HSV_CHARTREUSE});
 const hsv_t PROGMEM km_hsv_layer7[] = HSV_LAYER_SEGMENTS({HSV_ORANGE});
+const hsv_t PROGMEM km_hsv_matrix_layer[] = HSV_LAYER_SEGMENTS({HSV_YELLOW});
 const hsv_t PROGMEM km_hsv_capsword[] = HSV_LAYER_SEGMENTS({HSV_RED});
 const hsv_t PROGMEM km_hsv_off[] = HSV_LAYER_SEGMENTS({HSV_OFF});
 
@@ -22,6 +23,7 @@ const hsv_t * const PROGMEM km_hsv_layers[] = HSV_LAYERS_LIST(
     km_hsv_layer5,
     km_hsv_layer6,
     km_hsv_layer7,
+    km_hsv_matrix_layer,
     km_hsv_capsword
 );
 #endif
