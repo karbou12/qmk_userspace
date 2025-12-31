@@ -50,6 +50,9 @@ void us_dump_eeconfig(const char* const func) {
     for (uint8_t i = 0; i < ARRAY_SIZE(us_user_config.rgb.hsvm_layer); i++, p++) {
         uprintf("id:%u, hue:%u, sat:%u, val:%u, mode:%u\n", i, p->hsv.h, p->hsv.s, p->hsv.v, p->mode);
     }
+#ifdef CUSTOM_RGBMATRIX
+    uprintf("rm, hue:%u, sat:%u, val:%u, mode:%u\n", rgb_matrix_get_hue(), rgb_matrix_get_sat(), rgb_matrix_get_val(), rgb_matrix_get_mode());
+#endif
     uprintf("is_rgb_per_layer:%s\n", us_user_config.rgb.flags.is_rgb_per_layer ? "true" : "false");
     uprintf("is_auto_save_rgb:%s\n", us_user_config.rgb.flags.is_auto_save_rgb ? "true" : "false");
     uprintf("to_retain_val:%s\n", us_user_config.rgb.flags.to_retain_val ? "true" : "false");
@@ -139,12 +142,18 @@ void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field) {
 #ifdef CUSTOM_RGBMATRIX
-    static us_hsvm_t rm_hsvm;
+    static us_hsvm_t rm_hsvm = {};
     if (field == US_FIELD_LAYER_RM) {
-        rm_hsvm.hsv.h = rgb_matrix_get_hue();
-        rm_hsvm.hsv.s = rgb_matrix_get_sat();
-        rm_hsvm.hsv.v = rgb_matrix_get_val();
-        rm_hsvm.mode = rgb_matrix_get_mode();
+        us_hsvm_t cur_hsvm = {.hsv.h = rgb_matrix_get_hue(), .hsv.s = rgb_matrix_get_sat(),
+                              .hsv.v = rgb_matrix_get_val(), .mode = rgb_matrix_get_mode()};
+        if ((rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.hsv.s != cur_hsvm.hsv.s) ||
+            (rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.mode != cur_hsvm.mode)) {
+            rm_hsvm.hsv.h = cur_hsvm.hsv.h;
+            rm_hsvm.hsv.s = cur_hsvm.hsv.s;
+            rm_hsvm.hsv.v = cur_hsvm.hsv.v;
+            rm_hsvm.mode = cur_hsvm.mode;
+            eeconfig_force_flush_rgb_matrix();
+        }
         return &rm_hsvm;
     }
 #endif
