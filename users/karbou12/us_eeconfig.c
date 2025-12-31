@@ -212,6 +212,11 @@ bool US_EECONFIG_migrate_kb_datablock(void) {
         uprintf("%s : it may be the first vial install or very early version is installed.\n", __FUNCTION__);
 #endif
         return false;
+    } else if (EECONFIG_KB_DATA_VERSION < prev_ver) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : %lu -> %u downgrade version is installed.\n", __FUNCTION__, prev_ver, EECONFIG_KB_DATA_VERSION);
+#endif
+        return false;
     }
 
     // backup current eeprom data.
