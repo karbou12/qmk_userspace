@@ -3,6 +3,17 @@
 #pragma once
 #include "quantum.h"
 
+#ifdef POINTING_DEVICE_ENABLE
+extern void matrix_init_kb(void);
+extern void eeconfig_init_kb_datablock(void);
+extern void pointing_device_init_kb(void);
+extern void keyboard_post_init_kb(void);
+extern layer_state_t layer_state_set_kb(layer_state_t state);
+extern bool process_record_kb(uint16_t keycode, keyrecord_t* record);
+extern report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report);
+extern bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
+#endif
+
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 extern void eeconfig_init_user_datablock(void);
 #endif
@@ -24,4 +35,8 @@ extern void caps_word_set_user(bool active);
 
 #ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 extern bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record);
+#endif
+
+#ifdef CUSTOM_RGBMATRIX
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max);
 #endif

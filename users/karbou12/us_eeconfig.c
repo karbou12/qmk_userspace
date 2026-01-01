@@ -5,7 +5,12 @@
 #include "us_keycodes.h"
 #include "us_rgb.h"
 #include "us_os.h"
+#include "us_pointing_device.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
+
+#ifdef POINTING_DEVICE_ENABLE
+us_kb_config_t us_kb_config = {0};
+#endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 us_user_config_t us_user_config = {0};
@@ -22,17 +27,37 @@ static void parse_version(const uint32_t version, uint16_t* parsed_version) {
 
 void us_dump_eeconfig(const char* const func) {
     uint16_t version[3] = {0};
+
+#ifdef POINTING_DEVICE_ENABLE
+    parse_version(EECONFIG_KB_DATA_VERSION, version);
+    uprintf("------------------------------------------------------------\n");
+    uprintf("%s DUMP EEPROM KB DATA. ver:%04x (%u.%u.%u), size:%u, defined size:%u\n",
+            func, EECONFIG_KB_DATA_VERSION, version[2], version[1], version[0],
+            sizeof(us_kb_config), EECONFIG_KB_DATA_SIZE);
+    uprintf("cpi_idx:%u, scrl_div:%u, rotation_angle:%u\n",
+             us_kb_config.pd.cpi_idx, us_kb_config.pd.scrl_div, us_kb_config.pd.rotation_angle);
+    uprintf("auto_mouse:%s\n", us_kb_config.pd.flags.auto_mouse ? "true" : "false");
+    uprintf("scrl_inv:%s\n", us_kb_config.pd.flags.scrl_inv ? "true" : "false");
+#endif
+
     parse_version(EECONFIG_USER_DATA_VERSION, version);
     uprintf("------------------------------------------------------------\n");
     uprintf("%s DUMP EEPROM USER DATA. ver:%04x (%u.%u.%u), size:%u, defined size:%u\n",
             func, EECONFIG_USER_DATA_VERSION, version[2], version[1], version[0],
             sizeof(us_user_config), EECONFIG_USER_DATA_SIZE);
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     us_hsvm_t* p = us_user_config.rgb.hsvm_layer;
     for (uint8_t i = 0; i < ARRAY_SIZE(us_user_config.rgb.hsvm_layer); i++, p++) {
         uprintf("id:%u, hue:%u, sat:%u, val:%u, mode:%u\n", i, p->hsv.h, p->hsv.s, p->hsv.v, p->mode);
     }
+#ifdef CUSTOM_RGBMATRIX
+    uprintf("rm, hue:%u, sat:%u, val:%u, mode:%u\n", rgb_matrix_get_hue(), rgb_matrix_get_sat(), rgb_matrix_get_val(), rgb_matrix_get_mode());
+#endif
+#ifdef CUSTOM_RGBMATRIX
+    uprintf("is_rgb_per_layer:%s\n", us_user_config.rgb.flags.is_rgb_per_layer ? "keylight" : "underglow");
+#else
     uprintf("is_rgb_per_layer:%s\n", us_user_config.rgb.flags.is_rgb_per_layer ? "true" : "false");
+#endif
     uprintf("is_auto_save_rgb:%s\n", us_user_config.rgb.flags.is_auto_save_rgb ? "true" : "false");
     uprintf("to_retain_val:%s\n", us_user_config.rgb.flags.to_retain_val ? "true" : "false");
 #endif
@@ -46,10 +71,10 @@ void us_dump_eeconfig(const char* const func) {
 }
 #endif
 
-#if defined(RGBLIGHT_LAYERS) || defined(OS_DETECTION_ENABLE)
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX) || defined(OS_DETECTION_ENABLE)
 static uint32_t us_get_offset(const us_user_config_field_e field) {
     switch (field) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
         case US_FIELD_LAYER0 ... (ARRAY_SIZE(us_user_config.rgb.hsvm_layer) - 1):
             return sizeof(us_hsvm_t) * field;
         case US_FIELD_FLAGS:
@@ -57,7 +82,7 @@ static uint32_t us_get_offset(const us_user_config_field_e field) {
 #endif
 #ifdef OS_DETECTION_ENABLE
         case US_FIELD_OS_UNSURE ... US_FIELD_OS_IOS:
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
             return sizeof(us_hsvm_t) * ARRAY_SIZE(us_user_config.rgb.hsvm_layer) +
                    sizeof(uint8_t) +
                    sizeof(us_user_config_field_e) * (field - US_FIELD_OS_UNSURE);
@@ -71,8 +96,72 @@ static uint32_t us_get_offset(const us_user_config_field_e field) {
 }
 #endif
 
-#ifdef RGBLIGHT_LAYERS
+#ifdef POINTING_DEVICE_ENABLE
+uint8_t US_EECONFIG_get_pd_cpi_idx_from_mem(void) {
+    return us_kb_config.pd.cpi_idx;
+}
+
+void US_EECONFIG_update_pd_cpi_idx_to_eeprom(const uint8_t cpi_idx) {
+    us_kb_config.pd.cpi_idx = cpi_idx;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, cpi_idx);
+}
+
+uint8_t US_EECONFIG_get_pd_scrl_div_from_mem(void) {
+    return us_kb_config.pd.scrl_div;
+}
+
+void US_EECONFIG_update_pd_scrl_div_to_eeprom(const uint8_t scrl_div) {
+    us_kb_config.pd.scrl_div = scrl_div;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, scrl_div);
+}
+
+uint8_t US_EECONFIG_get_pd_rotation_angle_from_mem(void) {
+    return us_kb_config.pd.rotation_angle;
+}
+
+void US_EECONFIG_update_pd_rotation_angle_to_eeprom(const uint8_t rotation_angle) {
+    us_kb_config.pd.rotation_angle = rotation_angle;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, rotation_angle);
+}
+
+bool US_EECONFIG_get_pd_auto_mouse_from_mem(void) {
+    return us_kb_config.pd.flags.auto_mouse;
+}
+
+void US_EECONFIG_update_pd_auto_mouse_to_eeprom(const bool auto_mouse) {
+    us_kb_config.pd.flags.auto_mouse = auto_mouse;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, flag_raw);
+}
+
+bool US_EECONFIG_get_pd_scrl_inv_from_mem(void) {
+    return us_kb_config.pd.flags.scrl_inv;
+}
+
+void US_EECONFIG_update_pd_scrl_inv_to_eeprom(const bool scrl_inv) {
+    us_kb_config.pd.flags.scrl_inv = scrl_inv;
+    eeconfig_update_kb_datablock_field(us_kb_config.pd, flag_raw);
+}
+#endif
+
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
 const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_e field) {
+#ifdef CUSTOM_RGBMATRIX
+    static us_hsvm_t rm_hsvm = {};
+    if (field == US_FIELD_LAYER_RM) {
+        us_hsvm_t cur_hsvm = {.hsv.h = rgb_matrix_get_hue(), .hsv.s = rgb_matrix_get_sat(),
+                              .hsv.v = rgb_matrix_get_val(), .mode = rgb_matrix_get_mode()};
+        if ((rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.hsv.s != cur_hsvm.hsv.s) ||
+            (rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.mode != cur_hsvm.mode)) {
+            rm_hsvm.hsv.h = cur_hsvm.hsv.h;
+            rm_hsvm.hsv.s = cur_hsvm.hsv.s;
+            rm_hsvm.hsv.v = cur_hsvm.hsv.v;
+            rm_hsvm.mode = cur_hsvm.mode;
+            eeconfig_force_flush_rgb_matrix();
+        }
+        return &rm_hsvm;
+    }
+#endif
+
     if (sizeof(us_user_config.rgb.hsvm_layer) <= field) {
         return NULL;
     }
@@ -138,6 +227,79 @@ void US_EECONFIG_update_os_default_layer_to_eeprom(const us_user_config_field_e 
 }
 #endif
 
+#if (EECONFIG_KB_DATA_SIZE) > 0
+bool US_EECONFIG_migrate_kb_datablock(void) {
+    const uint32_t prev_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+
+    if (prev_ver < US_BASE_FW_VER_OF_KB_CONFIG_V1) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : it may be the first vial install or very early version is installed.\n", __FUNCTION__);
+#endif
+        return false;
+    } else if (EECONFIG_KB_DATA_VERSION < prev_ver) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : %lu -> %u downgrade version is installed.\n", __FUNCTION__, prev_ver, EECONFIG_KB_DATA_VERSION);
+#endif
+        return false;
+    }
+
+    // backup current eeprom data.
+    us_kb_config_u us_kb_config_bk;
+    const uint32_t bk_size = sizeof(us_kb_config_t);
+
+#if 1
+    // here, use eeprom func directly because eeconfig_read_user_datablock just init memory if version is invalid.
+    void *ee_start = (void *)(uintptr_t)(EECONFIG_KB_DATABLOCK);
+    void *ee_end   = (void *)(uintptr_t)(EECONFIG_KB_DATABLOCK + bk_size);
+    eeprom_read_block(&us_kb_config_bk, ee_start, ee_end - ee_start);
+#else
+    eeconfig_read_kb_datablock(&us_kb_config_bk, 0, bk_size);
+#endif
+
+    const us_kb_config_u us_kb_config_init = {0};
+    if (memcmp(&us_kb_config_bk, &us_kb_config_init, bk_size) == 0) {
+#ifdef CONSOLE_ENABLE
+        uprintf("%s : global memory has no data.\n", __FUNCTION__);
+#endif
+        return false;
+    }
+
+    // migrate global memory
+#ifdef POINTING_DEVICE_ENABLE
+    US_PD_eeconfig_migrate_kb_mem(&us_kb_config_bk, prev_ver);
+#endif
+
+    // store global memory into eeprom user datablock
+    US_EECONFIG_eeconfig_init_kb_datablock();
+
+    return true;
+}
+
+void US_EECONFIG_eeconfig_init_kb_datablock(void) {
+    eeconfig_update_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
+}
+#endif
+
+void US_EECONFIG_keyboard_post_init_kb(void) {
+#if (EECONFIG_KB_DATA_SIZE) > 0
+    eeconfig_read_kb_datablock(&us_kb_config, 0, sizeof(us_kb_config));
+#endif
+}
+
+bool US_EECONFIG_process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case USR_RESET:
+            if (record->event.pressed) {
+#if (EECONFIG_KB_DATA_SIZE) > 0
+                eeconfig_init_kb_datablock();
+#endif
+            }
+            return true;
+        default:
+            return true;
+    }
+}
+
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 bool US_EECONFIG_migrate_user_datablock(void) {
     const uint32_t prev_ver = eeprom_read_dword(EECONFIG_USER);
@@ -177,7 +339,7 @@ bool US_EECONFIG_migrate_user_datablock(void) {
     }
 
     // migrate global memory
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_eeconfig_migrate_mem(&us_user_config_bk, prev_ver);
 #endif
 #ifdef OS_DETECTION_ENABLE

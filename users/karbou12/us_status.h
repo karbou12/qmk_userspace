@@ -5,5 +5,5 @@
 
 extern void US_STATUS_set_change_layer_key_pressed_on_non_default_layer(const bool is_pressed);
 extern void US_STATUS_set_user_reset_key_pressed_on_non_default_layer(const bool is_pressed);
-extern bool US_STATUS_can_set_rgblight(void);
-extern bool US_STATUS_can_record_rgblight(void);
+extern bool US_STATUS_can_set_rgb(void);
+extern bool US_STATUS_can_record_rgb(void);

@@ -6,6 +6,7 @@
 #include "us_key_override.h"
 #include "us_os.h"
 #include "us_rgb.h"
+#include "us_pointing_device.h"
 #include <quantum/nvm/eeprom/nvm_eeprom_eeconfig_internal.h> // for EECONFIG_USER
 
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
@@ -13,24 +14,139 @@ uint16_t g_us_vial_keycode16 = KC_NO;
 #endif
 
 #ifdef CONSOLE_ENABLE
-#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
-static uint32_t eeconfig_init_ver = 0;
-static uint32_t post_init_ver = 0;
+#if (EECONFIG_KB_DATA_SIZE) > 0
+static uint32_t eeconfig_init_kb_ver = 0;
+static uint32_t post_init_kb_ver = 0;
 #endif
+#if (EECONFIG_USER_DATA_CALC_SIZE) > 0
+static uint32_t eeconfig_init_user_ver = 0;
+static uint32_t post_init_user_ver = 0;
+#endif
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+void matrix_init_kb(void) {
+    US_PD_matrix_init_kb();
+    matrix_init_user();
+}
+#endif
+
+#if (EECONFIG_KB_DATA_SIZE) > 0
+void eeconfig_init_kb_datablock(void) {
+#ifdef CONSOLE_ENABLE
+    eeconfig_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+    uprintf("============================================================\n");
+    uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+    uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
+            __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", eeconfig_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
+
+    // init global memory
+#ifdef POINTING_DEVICE_ENABLE
+    US_PD_eeconfig_init_kb_mem();
+#endif
+
+    US_DUMP_EECONFIG();
+
+    // store global memory into eeprom user datablock
+    US_EECONFIG_eeconfig_init_kb_datablock();
+
+    // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
+}
+#endif
+
+#ifdef POINTING_DEVICE_ENABLE
+void pointing_device_init_kb(void) {
+    US_PD_pointing_device_init_kb();
+    // no need to call init_user() because it is called after init_kb() in eeconfig_init_quantum().
+}
+#endif
+
+void keyboard_post_init_kb(void) {
+#ifdef CONSOLE_ENABLE
+#if (EECONFIG_KB_DATA_SIZE) > 0
+    post_init_kb_ver = eeprom_read_dword(EECONFIG_KEYBOARD);
+#endif
+    uprintf("============================================================\n");
+    uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
+#if (EECONFIG_KB_DATA_SIZE) > 0
+    uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
+            __FUNCTION__, eeconfig_is_kb_datablock_valid() ? "valid" : "invalid", post_init_kb_ver, EECONFIG_KB_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+#endif
+#endif
+
+    US_DUMP_EECONFIG();
+
+#if (EECONFIG_KB_DATA_SIZE) > 0
+    if (!eeconfig_is_kb_datablock_valid()) {
+        if (!US_EECONFIG_migrate_kb_datablock()) {
+            eeconfig_init_kb_datablock();
+        }
+    }
+
+    // read eeprom kb datablock into global memory
+    US_EECONFIG_keyboard_post_init_kb();
+#endif
+
+    US_DUMP_EECONFIG();
+
+#ifdef POINTING_DEVICE_ENABLE
+    US_PD_keyboard_post_init_kb();
+#endif
+
+    US_DUMP_EECONFIG();
+
+    keyboard_post_init_user();
+}
+
+layer_state_t layer_state_set_kb(layer_state_t state) {
+#ifdef POINTING_DEVICE_ENABLE
+    const layer_state_t ret_state = US_PD_layer_state_set_kb(state);
+    return layer_state_set_user(ret_state);
+#else
+    return layer_state_set_user(state);
+#endif
+}
+
+bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
+    if (!process_record_user(keycode, record)) {
+        return false;
+    } else if (!US_EECONFIG_process_record_kb(keycode, record)) {
+        return false;
+#ifdef POINTING_DEVICE_ENABLE
+    } else if (!US_PD_process_record_kb(keycode, record)) {
+        return false;
+#endif
+    }
+    return true;
+}
+
+#ifdef POINTING_DEVICE_ENABLE
+report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+    const report_mouse_t ret_mouse_report = US_PD_pointing_device_task_kb(mouse_report);
+    return pointing_device_task_user(ret_mouse_report);
+}
+
+bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
+    if (!US_PD_is_mouse_record_kb(keycode, record)) {
+        return false;
+    }
+    return is_mouse_record_user(keycode, record);
+}
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
 void eeconfig_init_user_datablock(void) {
 #ifdef CONSOLE_ENABLE
-    eeconfig_init_ver = eeprom_read_dword(EECONFIG_USER);
+    eeconfig_init_user_ver = eeprom_read_dword(EECONFIG_USER);
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
-            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeconfig_init_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeconfig_init_user_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
 #endif
 
     // init global memory
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_eeconfig_init_mem();
 #endif
 #ifdef OS_DETECTION_ENABLE
@@ -47,13 +163,13 @@ void eeconfig_init_user_datablock(void) {
 void keyboard_post_init_user(void) {
 #ifdef CONSOLE_ENABLE
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
-    post_init_ver = eeprom_read_dword(EECONFIG_USER);
+    post_init_user_ver = eeprom_read_dword(EECONFIG_USER);
 #endif
     uprintf("============================================================\n");
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
-            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", post_init_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
+            __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", post_init_user_ver, EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
 #endif
 #endif
 
@@ -77,7 +193,7 @@ void keyboard_post_init_user(void) {
 #endif
 
     // init rgblight
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_keyboard_post_init_user();
 #endif
 
@@ -94,7 +210,7 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
     uprintf("%s, def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
     uprintf("%s, eeconfig:%s, prev ver:%04lx, cur ver:%04x, vial:%lu\n",
             __FUNCTION__, eeconfig_is_user_datablock_valid() ? "valid" : "invalid", eeprom_read_dword(EECONFIG_USER), EECONFIG_USER_DATA_VERSION, VIAL_PROTOCOL_VERSION);
-    uprintf("%s, init ver:%04lx, post ver:%04lx\n", __FUNCTION__, eeconfig_init_ver, post_init_ver);
+    uprintf("%s, init ver:%04lx, post ver:%04lx\n", __FUNCTION__, eeconfig_init_user_ver, post_init_user_ver);
 #endif
 
     US_DUMP_EECONFIG();
@@ -108,7 +224,7 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
 #endif
 
 layer_state_t default_layer_state_set_user(layer_state_t state) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     layer_state_t ret_state = US_RGB_default_layer_state_set_user(state);
     return ret_state;
 #else
@@ -117,7 +233,7 @@ layer_state_t default_layer_state_set_user(layer_state_t state) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     layer_state_t ret_state = US_RGB_layer_state_set_user(state);
     return ret_state;
 #else
@@ -128,7 +244,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!US_EECONFIG_process_record_user(keycode, record)) {
         return false;
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     } else if (!US_RGB_process_record_user(keycode, record)) {
         return false;
 #endif
@@ -141,14 +257,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_post_process_record_user(keycode, record);
 #endif
 }
 
 #ifdef CAPS_WORD_ENABLE
 void caps_word_set_user(bool active) {
-#ifdef RGBLIGHT_LAYERS
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     US_RGB_caps_word_set_user(active);
 #endif
 }
@@ -157,5 +273,11 @@ void caps_word_set_user(bool active) {
 #ifdef CUSTOM_HOLD_ON_OTHER_KEY_PRESS_PER_KEY_ENABLE
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     return US_TH_get_hold_on_other_key_press(keycode, record);
+}
+#endif
+
+#ifdef CUSTOM_RGBMATRIX
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    return US_RGB_rgb_matrix_indicators_advanced_user(led_min, led_max);
 }
 #endif
