@@ -632,11 +632,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CUSTOM_RGBMATRIX
                 us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
 #else
-                if (next_flag) {
-                    us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-                } else {
-                    us_set_rgb_on_layer_of(US_FIELD_LAYER0);
-                }
+                us_set_rgb_on_layer_of(next_flag ? US_UTIL_get_current_layer(layer_state) : US_FIELD_LAYER0);
 #endif
                 if (US_UTIL_get_current_layer(layer_state) != US_FIELD_LAYER0) {
                     us_is_key_pressed_to_skip_rec_rgb = true;
