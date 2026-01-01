@@ -120,24 +120,18 @@ static void us_set_rgb_on_layer_of_common(const us_user_config_field_e field, co
 }
 
 static void us_set_rgb_on_layer_of(const us_user_config_field_e field) {
-    us_set_rgb_on_layer_of_common(field, true);
-}
-
 #ifdef CUSTOM_RGBMATRIX
-static void us_set_ug_on_layer_of(const us_user_config_field_e field) {
-    us_set_rgb_on_layer_of_common(field, false);
-}
-
-static void us_set_rgb_matrix_on_layer_of(const us_user_config_field_e field) {
     if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
-        us_set_rgb_on_layer_of(field);
-        us_set_ug_on_layer_of(US_FIELD_LAYER_RM);
+        us_set_rgb_on_layer_of_common(field, true);
+        us_set_rgb_on_layer_of_common(US_FIELD_LAYER_RM, false);
     } else {
-        us_set_rgb_on_layer_of(US_FIELD_LAYER_RM);
-        us_set_ug_on_layer_of(field);
+        us_set_rgb_on_layer_of_common(US_FIELD_LAYER_RM, true);
+        us_set_rgb_on_layer_of_common(field, false);
     }
-}
+#else
+    us_set_rgb_on_layer_of_common(field, true);
 #endif
+}
 
 typedef enum {
     US_REC_RAM,
@@ -397,11 +391,7 @@ void US_RGB_keyboard_post_init_user(void) {
 #endif
 
     us_rgb_enable_noeeprom();
-#ifdef CUSTOM_RGBMATRIX
-    us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#else
     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#endif
 };
 
 layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
@@ -449,17 +439,9 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
             rgblight_layers = df_blink_layers;
             rgblight_blink_layer_repeat(0, 300, 1);
 #endif
-#ifdef CUSTOM_RGBMATRIX
-            us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#else
             us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#endif
         } else {
-#ifdef CUSTOM_RGBMATRIX
-            us_set_rgb_matrix_on_layer_of(field);
-#else
             us_set_rgb_on_layer_of(field);
-#endif
         }
     }
 
@@ -498,11 +480,7 @@ layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
     }
 #endif
 
-#ifdef CUSTOM_RGBMATRIX
-    us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(state));
-#else
     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(state));
-#endif
 
     return state;
 };
@@ -613,11 +591,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                     US_STATUS_set_user_reset_key_pressed_on_non_default_layer(true);
                 }
                 set_single_default_layer(US_FIELD_LAYER0);
-#ifdef CUSTOM_RGBMATRIX
-                us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#else
                 us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#endif
             } else {
                 US_STATUS_set_user_reset_key_pressed_on_non_default_layer(false);
             }
@@ -631,11 +605,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                 rgblight_blink_layer_repeat(cur_flag ? US_BLINK_OFF : US_BLINK_ON, 300, 2);
 #endif
                 US_EECONFIG_update_retain_val_to_eeprom(!cur_flag);
-#ifdef CUSTOM_RGBMATRIX
-                us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#else
                 us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#endif
                 if (US_UTIL_get_current_layer(layer_state) != US_FIELD_LAYER0) {
                     us_is_key_pressed_to_skip_rec_rgb = true;
                 }
@@ -652,7 +622,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                 const bool next_flag = !cur_flag;
                 US_EECONFIG_update_rgb_per_layer_to_eeprom(next_flag);
 #ifdef CUSTOM_RGBMATRIX
-                us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
+                us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
 #else
                 if (next_flag) {
                     us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
@@ -784,11 +754,7 @@ void US_RGB_caps_word_set_user(bool active) {
 #ifdef CONSOLE_ENABLE
         uprintf("%s, inactive def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #endif
-#ifdef CUSTOM_RGBMATRIX
-        us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#else
         us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-#endif
     }
 }
 #endif
