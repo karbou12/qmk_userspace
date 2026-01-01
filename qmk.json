@@ -1,4 +1,10 @@
 {
-    "userspace_version": "1.0",
-    "build_targets": []
+    "userspace_version": "1.1",
+    "build_targets": [
+        ["aki27/cocot38mini", "karbou12"],
+        ["dottingdots/dotmatrix40", "karbou12"],
+        ["foostan/cornelius/rev2", "karbou12"],
+        ["green_keys/gravity_45", "karbou12"],
+        ["mogma_products/dottie_flipflow", "karbou12"]
+    ]
 }
