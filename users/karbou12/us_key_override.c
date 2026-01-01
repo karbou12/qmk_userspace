@@ -76,6 +76,8 @@ const key_override_t usr_adjust_val_up_override   = ko_make_with_layers(MOD_BIT(
 const key_override_t usr_adjust_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 #endif
 
+#define USE_KO_VAL
+
 const key_override_t *key_overrides[] = {
     &wheel_left_override,
     &wheel_right_override,
@@ -99,8 +101,13 @@ const key_override_t *key_overrides[] = {
 #ifdef CUSTOM_RGBMATRIX
     &usr_def_hue_up_override,
     &usr_def_hue_down_override,
+#ifdef USE_KO_VAL
+    &usr_def_val_up_override,
+    &usr_def_val_down_override,
+#else
     &usr_def_sat_up_override,
     &usr_def_sat_down_override,
+#endif
 #endif
 
     &usr_raise_hue_up_override,
