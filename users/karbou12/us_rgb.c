@@ -785,11 +785,7 @@ void US_RGB_caps_word_set_user(bool active) {
         uprintf("%s, inactive def:%u, layer_state:%u\n", __FUNCTION__, get_highest_layer(default_layer_state), get_highest_layer(layer_state));
 #endif
 #ifdef CUSTOM_RGBMATRIX
-        if (US_EECONFIG_get_rgb_per_layer_from_mem()) {
-            us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
-        } else {
-            us_set_ug_on_layer_of(US_UTIL_get_current_layer(layer_state));
-        }
+        us_set_rgb_matrix_on_layer_of(US_UTIL_get_current_layer(layer_state));
 #else
         us_set_rgb_on_layer_of(US_UTIL_get_current_layer(layer_state));
 #endif
