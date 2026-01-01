@@ -767,17 +767,16 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
     us_led_min = MIN(us_led_min, led_min);
     us_led_max = MAX(us_led_max, led_max);
 
-    // us_is_key_pressed_to_skip_rec_rgb = false;
-
     const hsv_t* const p_capsword = is_caps_word_on() ? km_hsv_capsword : NULL;
 
-    const us_user_config_field_e key_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_UTIL_get_current_layer(layer_state) : US_FIELD_LAYER_RM;
+    const bool is_for_key = US_EECONFIG_get_rgb_per_layer_from_mem();
+    const us_user_config_field_e key_field = is_for_key ? US_UTIL_get_current_layer(layer_state) : US_FIELD_LAYER_RM;
     const us_hsvm_t* p_key = US_EECONFIG_get_hsvm_layer_from_mem(key_field);
     if (!p_key) {
         return true;
     }
 
-    const us_user_config_field_e ug_field = US_EECONFIG_get_rgb_per_layer_from_mem() ? US_FIELD_LAYER_RM : US_UTIL_get_current_layer(layer_state);
+    const us_user_config_field_e ug_field = is_for_key ? US_FIELD_LAYER_RM : US_UTIL_get_current_layer(layer_state);
     const us_hsvm_t* p_ug = US_EECONFIG_get_hsvm_layer_from_mem(ug_field);
     if (!p_ug) {
         return true;
@@ -785,17 +784,17 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
 
     const us_hsvm_t* p_layer0 = US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0);
 
-    const hsv_t key_hsv = {
-        (US_EECONFIG_get_rgb_per_layer_from_mem() && p_capsword) ? p_capsword->h : p_key->hsv.h,
-        (US_EECONFIG_get_rgb_per_layer_from_mem() && p_capsword) ? p_capsword->s : p_key->hsv.s,
-        (US_EECONFIG_get_rgb_per_layer_from_mem() && (p_capsword || US_EECONFIG_get_retain_val_from_mem())) ? p_layer0->hsv.v : p_key->hsv.v};
+#define SET_HSV(for_key, p) \
+    (for_key && p_capsword) ? p_capsword->h : p->hsv.h, \
+    (for_key && p_capsword) ? p_capsword->s : p->hsv.s, \
+    (for_key && (p_capsword || US_EECONFIG_get_retain_val_from_mem())) ? p_layer0->hsv.v : p->hsv.h
+
+    const hsv_t key_hsv = {SET_HSV(is_for_key, p_key)};
     const rgb_t key_rgb = hsv_to_rgb(key_hsv);
 
-    const hsv_t ug_hsv = {
-        (!US_EECONFIG_get_rgb_per_layer_from_mem() && p_capsword) ? p_capsword->h : p_ug->hsv.h,
-        (!US_EECONFIG_get_rgb_per_layer_from_mem() && p_capsword) ? p_capsword->s : p_ug->hsv.s,
-        (!US_EECONFIG_get_rgb_per_layer_from_mem() && (p_capsword || US_EECONFIG_get_retain_val_from_mem())) ? p_layer0->hsv.v : p_ug->hsv.v};
+    const hsv_t ug_hsv = {SET_HSV(!is_for_key, p_ug)};
     const rgb_t ug_rgb = hsv_to_rgb(ug_hsv);
+#undef SET_HSV
 
     for (uint8_t i = led_min; i < led_max; i++) {
         if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT) && p_key->mode == GET_STATIC_MODE()) {
