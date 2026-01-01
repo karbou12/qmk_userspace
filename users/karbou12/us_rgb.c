@@ -38,21 +38,63 @@ static const rgblight_segment_t * const PROGMEM df_blink_layers[] = RGBLIGHT_LAY
 #define GET_STATIC_MODE() RGBLIGHT_MODE_STATIC_LIGHT
 #endif
 
-static bool us_is_rgb_enabled(void) {
-#ifdef CUSTOM_RGBMATRIX
-    return rgb_matrix_is_enabled();
-#else
-    return rgblight_is_enabled();
-#endif
-}
+#define US_RGBWRAP_HELPER(name)                        \
+    static inline bool us_rgb_is_enabled(void) {       \
+        return rgb ##name ##_is_enabled();             \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_enable_noeeprom(void) {  \
+        rgb ##name ##_enable_noeeprom();               \
+    }                                                  \
+                                                       \
+    static inline uint8_t us_rgb_get_hue(void) {       \
+        return rgb ##name ##_get_hue();                \
+    }                                                  \
+                                                       \
+    static inline uint8_t us_rgb_get_sat(void) {       \
+        return rgb ##name ##_get_sat();                \
+    }                                                  \
+                                                       \
+    static inline uint8_t us_rgb_get_val(void) {       \
+        return rgb ##name ##_get_val();                \
+    }                                                  \
+                                                       \
+    static inline uint8_t us_rgb_get_mode(void) {      \
+        return rgb ##name ##_get_mode();               \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_increase_hue(void) {     \
+        rgb ##name ##_increase_hue();                  \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_decrease_hue(void) {     \
+        rgb ##name ##_decrease_hue();                  \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_increase_sat(void) {     \
+        rgb ##name ##_increase_sat();                  \
+    }                                                  \
+    static inline void us_rgb_decrease_sat(void) {     \
+        rgb ##name ##_decrease_sat();                  \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_increase_val(void) {     \
+        rgb ##name ##_increase_val();                  \
+    }                                                  \
+                                                       \
+    static inline void us_rgb_decrease_val(void) {     \
+        rgb ##name ##_decrease_val();                  \
+    }                                                  \
+                                                       \
+    static void us_rgb_mode_noeeprom(uint8_t mode) {   \
+        rgb ##name ##_mode_noeeprom(mode);             \
+    }
 
-static void us_rgb_enable_noeeprom(void) {
 #ifdef CUSTOM_RGBMATRIX
-    rgb_matrix_enable_noeeprom();
+US_RGBWRAP_HELPER(_matrix);
 #else
-    rgblight_enable_noeeprom();
+US_RGBWRAP_HELPER(light);
 #endif
-}
 
 static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uint8_t val, uint8_t mode, const bool is_for_key) {
 #ifdef CUSTOM_RGBMATRIX
@@ -70,10 +112,10 @@ static void us_set_hsvm_noeeprom(const uint8_t hue, const uint8_t sat, const uin
         }
     }
 
-    rgb_matrix_mode_noeeprom(mode);
+    us_rgb_mode_noeeprom(mode);
 #else
     rgblight_sethsv_noeeprom(hue, sat, val);
-    rgblight_mode_noeeprom(mode);
+    us_rgb_mode_noeeprom(mode);
 #endif
 }
 
@@ -170,13 +212,11 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
     if (type == US_REC_RAM) {
         US_EECONFIG_update_hsvm_layer_to_eeprom(field, p);
     } else {
-        us_hsvm_t cur_hsvm = {.hsv.h = rgb_matrix_get_hue(), .hsv.s = rgb_matrix_get_sat(),
-                              .hsv.v = rgb_matrix_get_val(), .mode = rgb_matrix_get_mode()};
 #else
     {
-        us_hsvm_t cur_hsvm = {.hsv.h = rgblight_get_hue(), .hsv.s = rgblight_get_sat(),
-                              .hsv.v = rgblight_get_val(), .mode = rgblight_get_mode()};
 #endif
+        us_hsvm_t cur_hsvm = {.hsv.h = us_rgb_get_hue(), .hsv.s = us_rgb_get_sat(),
+                              .hsv.v = us_rgb_get_val(), .mode = us_rgb_get_mode()};
 
         if ((cur_hsvm.hsv.h == p->hsv.h) && (cur_hsvm.hsv.s == p->hsv.s) && (cur_hsvm.mode == p->mode)) {
             if (((field == US_FIELD_LAYER0) && (cur_hsvm.hsv.v == p->hsv.v)) ||
@@ -195,49 +235,25 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
 static void us_update_hue(const bool is_increase) {
     if (is_increase) {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_increase_hue();
-#else
-        rgblight_increase_hue();
-#endif
+        us_rgb_increase_hue();
     } else {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_decrease_hue();
-#else
-        rgblight_decrease_hue();
-#endif
+        us_rgb_decrease_hue();
     }
 }
 
 static void us_update_sat(const bool is_increase) {
     if (is_increase) {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_increase_sat();
-#else
-        rgblight_increase_sat();
-#endif
+        us_rgb_increase_sat();
     } else {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_decrease_sat();
-#else
-        rgblight_decrease_sat();
-#endif
+        us_rgb_decrease_sat();
     }
 }
 
 static void us_update_val(const bool is_increase) {
     if (is_increase) {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_increase_val();
-#else
-        rgblight_increase_val();
-#endif
+        us_rgb_increase_val();
     } else {
-#ifdef CUSTOM_RGBMATRIX
-        rgb_matrix_decrease_val();
-#else
-        rgblight_decrease_val();
-#endif
+        us_rgb_decrease_val();
     }
 }
 #endif
@@ -312,9 +328,9 @@ static bool us_is_rgb_per_layer_enabled(keyrecord_t *record) {
     const bool is_rgb_per_layer = US_EECONFIG_get_rgb_per_layer_from_mem();
 #endif
     if (record) {
-        return (record->event.pressed && us_is_rgb_enabled() && is_rgb_per_layer);
+        return (record->event.pressed && us_rgb_is_enabled() && is_rgb_per_layer);
     } else {
-        return (us_is_rgb_enabled() && is_rgb_per_layer);
+        return (us_rgb_is_enabled() && is_rgb_per_layer);
     }
 }
 
@@ -387,7 +403,7 @@ void US_RGB_keyboard_post_init_user(void) {
 };
 
 layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
-    if (!us_is_rgb_enabled()) {
+    if (!us_rgb_is_enabled()) {
         return state;
     }
 
@@ -441,7 +457,7 @@ layer_state_t US_RGB_default_layer_state_set_user(layer_state_t state) {
 }
 
 layer_state_t US_RGB_layer_state_set_user(layer_state_t state) {
-    if (!us_is_rgb_enabled()) {
+    if (!us_rgb_is_enabled()) {
         return state;
     }
 
@@ -520,7 +536,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
                     default:
                         break;
                 }
-                if (us_is_rgb_enabled()) {
+                if (us_rgb_is_enabled()) {
 #ifdef CUSTOM_RGBMATRIX
                     us_record_rgb_on_layer_of(US_FIELD_LAYER_RM, US_REC_EEPROM);
 #else
@@ -605,7 +621,7 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
 
         case USR_RGB_LAYER_TOG:
-            if (us_is_rgb_enabled() && record->event.pressed) {
+            if (us_rgb_is_enabled() && record->event.pressed) {
                 const bool cur_flag = US_EECONFIG_get_rgb_per_layer_from_mem();
 #ifdef RGBLIGHT_LAYER_BLINK
                 rgblight_layers = km_blink_layers;
@@ -694,7 +710,7 @@ void US_RGB_post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
 
         case UG_NEXT ... RM_SPDD:
-            if (us_is_rgb_enabled()) {
+            if (us_rgb_is_enabled()) {
 #ifdef CUSTOM_RGBMATRIX
                 us_record_rgb_on_layer_of(US_FIELD_LAYER_RM, US_REC_EEPROM);
 #else
@@ -738,7 +754,7 @@ void US_RGB_caps_word_set_user(bool active) {
         const hsv_t* const cur_seg = km_hsv_capsword;
         us_set_hsvm_noeeprom(cur_seg->h, cur_seg->s, US_EECONFIG_get_hsvm_layer_from_mem(US_FIELD_LAYER0)->hsv.v,
 #ifdef CUSTOM_RGBMATRIX
-                rgb_matrix_get_mode(), US_EECONFIG_get_rgb_per_layer_from_mem());
+                us_rgb_get_mode(), US_EECONFIG_get_rgb_per_layer_from_mem());
 #else
                 GET_STATIC_MODE(), true);
 #endif
