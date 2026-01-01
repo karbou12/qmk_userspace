@@ -22,10 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "us_keymap.h"
 #include "us_keycodes.h"
 
-#define MS_BTN1 KC_MS_BTN1
-#define MS_BTN2 KC_MS_BTN2
-#define MS_BTN3 KC_MS_BTN3
-
 #define COCOT_SCROLL_INV_DEFAULT false
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -73,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         QAZ_NONE,                              QAZ_NONE,
         QAZ_NONE,                              MS_BTN1, MS_BTN2, MS_BTN3, KC_NO, KC_NO,
         QAZ_NONE,                              QAZ_NONE,
-        KC_NO, SCRL_MO, MS_BTN1, KC_NO, KC_NO, KC_BTN2, KC_NO, KC_NO
+        KC_NO, SCRL_MO, MS_BTN1, KC_NO, KC_NO, MS_BTN2, KC_NO, KC_NO
     ),
 
     [5] = LAYOUT_wrapper(
