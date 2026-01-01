@@ -172,6 +172,11 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
     } else {
         us_hsvm_t cur_hsvm = {.hsv.h = rgb_matrix_get_hue(), .hsv.s = rgb_matrix_get_sat(),
                               .hsv.v = rgb_matrix_get_val(), .mode = rgb_matrix_get_mode()};
+#else
+    {
+        us_hsvm_t cur_hsvm = {.hsv.h = rgblight_get_hue(), .hsv.s = rgblight_get_sat(),
+                              .hsv.v = rgblight_get_val(), .mode = rgblight_get_mode()};
+#endif
 
         if ((cur_hsvm.hsv.h == p->hsv.h) && (cur_hsvm.hsv.s == p->hsv.s) && (cur_hsvm.mode == p->mode)) {
             if (((field == US_FIELD_LAYER0) && (cur_hsvm.hsv.v == p->hsv.v)) ||
@@ -182,19 +187,6 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
 
         US_EECONFIG_update_hsvm_layer_to_eeprom(field, &cur_hsvm);
     }
-#else
-    us_hsvm_t cur_hsvm = {.hsv.h = rgblight_get_hue(), .hsv.s = rgblight_get_sat(),
-                          .hsv.v = rgblight_get_val(), .mode = rgblight_get_mode()};
-
-    if ((cur_hsvm.hsv.h == p->hsv.h) && (cur_hsvm.hsv.s == p->hsv.s) && (cur_hsvm.mode == p->mode)) {
-        if (((field == US_FIELD_LAYER0) && (cur_hsvm.hsv.v == p->hsv.v)) ||
-            ((field != US_FIELD_LAYER0) && ((cur_hsvm.hsv.v == p->hsv.v) || US_EECONFIG_get_retain_val_from_mem()))) {
-            return;
-        }
-    }
-
-    US_EECONFIG_update_hsvm_layer_to_eeprom(field, &cur_hsvm);
-#endif
 
     US_DUMP_EECONFIG();
 }
