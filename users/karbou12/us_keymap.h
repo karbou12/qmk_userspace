@@ -30,7 +30,7 @@
 #define OS_MAC_9         KC_P9
 #define OS_MAC_PLUS      KC_PPLS
 #define OS_MAC_MINUS     KC_PMNS
-#define OS_MAC_MULTIPLY  KC_PAST
+#define OS_MAC_MULTIPLY  LSFT(KC_8)
 #define OS_MAC_DIVIDE    KC_PSLS
 #define OS_MAC_EQUAL     KC_PEQL
 #define OS_MAC_DOT       KC_PDOT
