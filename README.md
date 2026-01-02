@@ -1,22 +1,34 @@
 # karbou12's QMK Userspace
 
+## local folder structure
+
+Clone qmk_userspace and vial-qmk on same directory.
+
+```sh
+% tree
+└── develop
+    ├── qmk_firmware
+    ├── qmk_userspace
+    └── vial-qmk
+```
+
 ## local build settings
 
-1. use `./scripts/set_config.h` to enable userspace, it set `qmk config user.overlay_dir`.
-2. use `qmk config user.qmk_home="<vial-qmk path>"` to build with vial-qmk.
-3. add keyboard/keymap using `./scripts/link_kb.sh <keyboard>`
-4. build keyboards with `make <keyboard>:<keymap>`
-5. flash with `make <keyboard>:<keymap>:flash`
-6. add keyboard/keymap into build target by `qmk userspace-add -kb <keyboard> -km <keymap>`.
-7. build all keyboard/keymap by `qmk userspace-compile -j 8 -p`.
+1. call `qmk_userspace/scripts/set_config.h` to enable userspace, it sets `qmk config user.overlay_dir`.
+2. call `qmk config user.qmk_home="<vial-qmk path>"` to build userspace with vial-qmk.
+3. add keyboard/keymap by calling `qmk_userspace/scripts/link_kb.sh <keyboard>`
+4. build keyboards by calling `make <keyboard>:<keymap>`
+5. flash by calling `make <keyboard>:<keymap>:flash`
+6. add keyboard/keymap into build target by calling `qmk userspace-add -kb <keyboard> -km <keymap>`.
+7. build all keyboard/keymap by calling `qmk userspace-compile -j 8 -p`.
 
 ## supported my keyboard:keymap
 
-- mogma_products/dottie_flipflow:karbou12
-- green_keys/gravity_45:karbou12
-- foostan/cornelius/rev2:karbou12
-- dottingdots/dotmatrix40:karbou12
 - aki27/cocot38mini:karbou12
+- dottingdots/dotmatrix40:karbou12
+- foostan/cornelius/rev2:karbou12
+- green_keys/gravity_45:karbou12
+- mogma_products/dottie_flipflow:karbou12
 
 ---
 
