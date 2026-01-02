@@ -38,7 +38,7 @@
 #define OS_MAC_CAPTURE_1 LSG(KC_3)
 #define OS_MAC_CAPTURE_2 LSG(KC_4)
 #define OS_MAC_CAPTURE_3 LSG(KC_5)
-#define OS_MAC_LOCK      LCTL(LGUI(KC_Q))
+#define OS_MAC_LOCK      LCG(KC_Q)
 #define OS_MAC_DF        DF(WIN(BASE))
 
 #define MAC(x) OS_MAC_ ## x
