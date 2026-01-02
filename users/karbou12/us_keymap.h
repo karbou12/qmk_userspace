@@ -72,7 +72,7 @@
 // Layer 2  Mac Lower : Symbols
 #define MAC_QAZ_LOWER_LEFT_TOP     LSFT(KC_SLSH), LSFT(KC_QUOT), LSFT(KC_1),    KC_BSPC,        LSFT(KC_GRAVE)
 #define MAC_QAZ_LOWER_LEFT_MIDDLE  LSFT(KC_2),    KC_QUOT,       LSFT(KC_4),    KC_DEL,         KC_SLSH
-#define MAC_QAZ_LOWER_LEFT_BOTTOM  KC_NO,         KC_GRAVE,      LSFT(KC_6),    LSFT(KC_BSLS),  KC_BSLS
+#define MAC_QAZ_LOWER_LEFT_BOTTOM  KC_ENT,        KC_GRAVE,      LSFT(KC_6),    LSFT(KC_BSLS),  KC_BSLS
 
 #define MAC_QAZ_LOWER_RIGHT_TOP    KC_NO,         LSFT(KC_MINS), LSFT(KC_9),    LSFT(KC_0),     LSFT(KC_5)
 #define MAC_QAZ_LOWER_RIGHT_MIDDLE LSFT(KC_3),    KC_NO,         KC_LBRC,       KC_RBRC,        KC_RCTL
@@ -226,7 +226,7 @@
 // Layer 6  Win Lower : Symbols
 #define WIN_QAZ_LOWER_LEFT_TOP     LSFT(KC_SLSH), LSFT(KC_QUOT), LSFT(KC_1),    KC_BSPC,        LSFT(KC_GRAVE)
 #define WIN_QAZ_LOWER_LEFT_MIDDLE  LSFT(KC_2),    KC_QUOT,       LSFT(KC_4),    KC_DEL,         KC_SLSH
-#define WIN_QAZ_LOWER_LEFT_BOTTOM  KC_NO,         KC_GRAVE,      LSFT(KC_6),    LSFT(KC_BSLS),  KC_BSLS
+#define WIN_QAZ_LOWER_LEFT_BOTTOM  KC_ENT,        KC_GRAVE,      LSFT(KC_6),    LSFT(KC_BSLS),  KC_BSLS
 
 #define WIN_QAZ_LOWER_RIGHT_TOP    KC_NO,         LSFT(KC_MINS), LSFT(KC_9),    LSFT(KC_0),     LSFT(KC_5)
 #define WIN_QAZ_LOWER_RIGHT_MIDDLE LSFT(KC_3),    KC_NO,         KC_LBRC,       KC_RBRC,        KC_RCTL
