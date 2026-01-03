@@ -151,7 +151,7 @@ const us_hsvm_t* US_EECONFIG_get_hsvm_layer_from_mem(const us_user_config_field_
         us_hsvm_t cur_hsvm = {.hsv.h = rgb_matrix_get_hue(), .hsv.s = rgb_matrix_get_sat(),
                               .hsv.v = rgb_matrix_get_val(), .mode = rgb_matrix_get_mode()};
         if ((rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.hsv.s != cur_hsvm.hsv.s) ||
-            (rm_hsvm.hsv.h != cur_hsvm.hsv.h) || (rm_hsvm.mode != cur_hsvm.mode)) {
+            (rm_hsvm.hsv.v != cur_hsvm.hsv.v) || (rm_hsvm.mode != cur_hsvm.mode)) {
             rm_hsvm.hsv.h = cur_hsvm.hsv.h;
             rm_hsvm.hsv.s = cur_hsvm.hsv.s;
             rm_hsvm.hsv.v = cur_hsvm.hsv.v;

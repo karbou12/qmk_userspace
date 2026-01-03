@@ -791,7 +791,7 @@ bool US_RGB_rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max
 #define SET_HSV(for_key, p) \
     (for_key && p_capsword) ? p_capsword->h : p->hsv.h, \
     (for_key && p_capsword) ? p_capsword->s : p->hsv.s, \
-    (for_key && (p_capsword || US_EECONFIG_get_retain_val_from_mem())) ? p_layer0->hsv.v : p->hsv.h
+    (for_key && (p_capsword || US_EECONFIG_get_retain_val_from_mem())) ? p_layer0->hsv.v : p->hsv.v
 
     const hsv_t key_hsv = {SET_HSV(is_for_key, p_key)};
     const rgb_t key_rgb = hsv_to_rgb(key_hsv);
