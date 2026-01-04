@@ -30,50 +30,50 @@ const key_override_t tab_prev_override    = ko_make_with_negmods(MOD_BIT(KC_LCTL
 const key_override_t tab_next_override    = ko_make_with_negmods(MOD_BIT(KC_LCTL), MS_WHLU, LCTL(KC_TAB),   MOD_BIT(KC_LALT));
 
 #ifdef CUSTOM_RGBMATRIX
-const key_override_t ug_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), MS_WHLD, RM_HUED, L_BASE);
-const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), MS_WHLU, RM_HUEU, L_BASE);
-const key_override_t ug_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL) | MOD_BIT(KC_RGUI), MS_WHLD, RM_SATD, L_BASE);
-const key_override_t ug_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL) | MOD_BIT(KC_RGUI), MS_WHLU, RM_SATU, L_BASE);
-const key_override_t ug_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT) | MOD_BIT(KC_RGUI), MS_WHLD, RM_VALD, L_BASE);
-const key_override_t ug_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT) | MOD_BIT(KC_RGUI), MS_WHLU, RM_VALU, L_BASE);
+const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), MS_WHLD, RM_HUED, L_BASE);
+const key_override_t ug_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), MS_WHLU, RM_HUEU, L_BASE);
+const key_override_t ug_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL) | MOD_BIT(KC_RGUI), MS_WHLD, RM_SATD, L_BASE);
+const key_override_t ug_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL) | MOD_BIT(KC_RGUI), MS_WHLU, RM_SATU, L_BASE);
+const key_override_t ug_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT) | MOD_BIT(KC_RGUI), MS_WHLD, RM_VALD, L_BASE);
+const key_override_t ug_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT) | MOD_BIT(KC_RGUI), MS_WHLU, RM_VALU, L_BASE);
 
-const key_override_t usr_def_hue_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RSFT), MS_WHLD, USR_RGB_LAYER_HUE_DOWN, L_BASE, MOD_BIT(KC_RGUI));
-const key_override_t usr_def_hue_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RSFT), MS_WHLU, USR_RGB_LAYER_HUE_UP,   L_BASE, MOD_BIT(KC_RGUI));
-const key_override_t usr_def_sat_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RCTL), MS_WHLD, USR_RGB_LAYER_SAT_DOWN, L_BASE, MOD_BIT(KC_RGUI));
-const key_override_t usr_def_sat_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RCTL), MS_WHLU, USR_RGB_LAYER_SAT_UP,   L_BASE, MOD_BIT(KC_RGUI));
-const key_override_t usr_def_val_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RALT), MS_WHLD, USR_RGB_LAYER_VAL_DOWN, L_BASE, MOD_BIT(KC_RGUI));
-const key_override_t usr_def_val_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RALT), MS_WHLU, USR_RGB_LAYER_VAL_UP,   L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_hue_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RSFT), MS_WHLD, USR_RGB_LAYER_HUE_DOWN, L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_hue_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RSFT), MS_WHLU, USR_RGB_LAYER_HUE_UP,   L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_sat_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RCTL), MS_WHLD, USR_RGB_LAYER_SAT_DOWN, L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_sat_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RCTL), MS_WHLU, USR_RGB_LAYER_SAT_UP,   L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_val_down_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_RALT), MS_WHLD, USR_RGB_LAYER_VAL_DOWN, L_BASE, MOD_BIT(KC_RGUI));
+const key_override_t usr_def_val_up_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_RALT), MS_WHLU, USR_RGB_LAYER_VAL_UP,   L_BASE, MOD_BIT(KC_RGUI));
 
 #elif RGBLIGHT_LAYERS
-const key_override_t ug_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), MS_WHLD, UG_HUED, L_BASE);
-const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), MS_WHLU, UG_HUEU, L_BASE);
-const key_override_t ug_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), MS_WHLD, UG_SATD, L_BASE);
-const key_override_t ug_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), MS_WHLU, UG_SATU, L_BASE);
-const key_override_t ug_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), MS_WHLD, UG_VALD, L_BASE);
-const key_override_t ug_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), MS_WHLU, UG_VALU, L_BASE);
+const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), MS_WHLD, UG_HUED, L_BASE);
+const key_override_t ug_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), MS_WHLU, UG_HUEU, L_BASE);
+const key_override_t ug_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), MS_WHLD, UG_SATD, L_BASE);
+const key_override_t ug_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), MS_WHLU, UG_SATU, L_BASE);
+const key_override_t ug_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), MS_WHLD, UG_VALD, L_BASE);
+const key_override_t ug_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), MS_WHLU, UG_VALU, L_BASE);
 #endif
 
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
-const key_override_t usr_raise_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), LGUI(KC_PMNS), USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
-const key_override_t usr_raise_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), LGUI(KC_PPLS), USR_RGB_LAYER_HUE_UP, L_NON_BASE);
-const key_override_t usr_raise_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), LGUI(KC_PMNS), USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
-const key_override_t usr_raise_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), LGUI(KC_PPLS), USR_RGB_LAYER_SAT_UP, L_NON_BASE);
-const key_override_t usr_raise_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PMNS), USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
-const key_override_t usr_raise_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PPLS), USR_RGB_LAYER_VAL_UP, L_NON_BASE);
+const key_override_t usr_raise_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), LGUI(KC_PMNS), USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
+const key_override_t usr_raise_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), LGUI(KC_PPLS), USR_RGB_LAYER_HUE_UP, L_NON_BASE);
+const key_override_t usr_raise_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), LGUI(KC_PMNS), USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
+const key_override_t usr_raise_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), LGUI(KC_PPLS), USR_RGB_LAYER_SAT_UP, L_NON_BASE);
+const key_override_t usr_raise_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PMNS), USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
+const key_override_t usr_raise_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PPLS), USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 
-const key_override_t usr_lower_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRID, USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
-const key_override_t usr_lower_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRIU, USR_RGB_LAYER_HUE_UP, L_NON_BASE);
-const key_override_t usr_lower_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_BRID, USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
-const key_override_t usr_lower_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_BRIU, USR_RGB_LAYER_SAT_UP, L_NON_BASE);
-const key_override_t usr_lower_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), KC_BRID, USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
-const key_override_t usr_lower_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), KC_BRIU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
+const key_override_t usr_lower_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRID, USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
+const key_override_t usr_lower_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRIU, USR_RGB_LAYER_HUE_UP, L_NON_BASE);
+const key_override_t usr_lower_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_BRID, USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
+const key_override_t usr_lower_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_BRIU, USR_RGB_LAYER_SAT_UP, L_NON_BASE);
+const key_override_t usr_lower_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), KC_BRID, USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
+const key_override_t usr_lower_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), KC_BRIU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 
-const key_override_t usr_adjust_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_VOLD, USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
-const key_override_t usr_adjust_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_VOLU, USR_RGB_LAYER_HUE_UP, L_NON_BASE);
-const key_override_t usr_adjust_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_VOLD, USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
-const key_override_t usr_adjust_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_VOLU, USR_RGB_LAYER_SAT_UP, L_NON_BASE);
-const key_override_t usr_adjust_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLD, USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
-const key_override_t usr_adjust_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
+const key_override_t usr_adjust_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_VOLD, USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
+const key_override_t usr_adjust_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_VOLU, USR_RGB_LAYER_HUE_UP, L_NON_BASE);
+const key_override_t usr_adjust_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_VOLD, USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
+const key_override_t usr_adjust_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_VOLU, USR_RGB_LAYER_SAT_UP, L_NON_BASE);
+const key_override_t usr_adjust_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLD, USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
+const key_override_t usr_adjust_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 #endif
 
 #define USE_KO_VAL
@@ -91,39 +91,39 @@ const key_override_t *key_overrides[] = {
     &tab_next_override,
 
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
-    &ug_hue_up_override,
     &ug_hue_down_override,
-    &ug_sat_up_override,
+    &ug_hue_up_override,
     &ug_sat_down_override,
-    &ug_val_up_override,
+    &ug_sat_up_override,
     &ug_val_down_override,
+    &ug_val_up_override,
 
 #ifdef CUSTOM_RGBMATRIX
-    &usr_def_hue_up_override,
     &usr_def_hue_down_override,
+    &usr_def_hue_up_override,
 #ifdef USE_KO_VAL
-    &usr_def_val_up_override,
     &usr_def_val_down_override,
+    &usr_def_val_up_override,
 #else
-    &usr_def_sat_up_override,
     &usr_def_sat_down_override,
+    &usr_def_sat_up_override,
 #endif
 #endif
 
-    &usr_raise_hue_up_override,
     &usr_raise_hue_down_override,
-    &usr_raise_sat_up_override,
+    &usr_raise_hue_up_override,
     &usr_raise_sat_down_override,
+    &usr_raise_sat_up_override,
 
-    &usr_lower_hue_up_override,
     &usr_lower_hue_down_override,
-    &usr_lower_sat_up_override,
+    &usr_lower_hue_up_override,
     &usr_lower_sat_down_override,
+    &usr_lower_sat_up_override,
 
-    &usr_adjust_hue_up_override,
     &usr_adjust_hue_down_override,
-    &usr_adjust_sat_up_override,
+    &usr_adjust_hue_up_override,
     &usr_adjust_sat_down_override,
+    &usr_adjust_sat_up_override,
 #endif
 };
 const uint16_t key_overrides_raw_size = ARRAY_SIZE(key_overrides);
