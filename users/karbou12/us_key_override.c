@@ -55,6 +55,11 @@ const key_override_t win_raise_arrow_right_override = ko_make_with_layers_and_ne
 const key_override_t win_raise_arrow_up_override    = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), WIN_CCW_RAISE, KC_UP,   L_NON_BASE);
 const key_override_t win_raise_arrow_down_override  = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), WIN_CW_RAISE,  KC_DOWN, L_NON_BASE);
 
+#ifdef BACKLIGHT_ENABLE
+const key_override_t win_raise_backlight_down_override = ko_make_with_layers(MOD_BIT(KC_RGUI), WIN_CCW_RAISE, BL_DOWN, L_NON_BASE);
+const key_override_t win_raise_backlight_up_override   = ko_make_with_layers(MOD_BIT(KC_RGUI), WIN_CW_RAISE,  BL_UP,   L_NON_BASE);
+#endif
+
 const key_override_t lower_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), CCW_LOWER, LCTL(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LSFT));
 const key_override_t lower_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), CW_LOWER,  LCTL(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LSFT));
 
@@ -191,6 +196,10 @@ const key_override_t *key_overrides[] = {
     &win_raise_arrow_right_override,
     &win_raise_arrow_up_override,
     &win_raise_arrow_down_override,
+#ifdef BACKLIGHT_ENABLE
+    &win_raise_backlight_down_override,
+    &win_raise_backlight_up_override,
+#endif
     &win_usr_raise_hue_down_override,
     &win_usr_raise_hue_up_override,
     &win_usr_raise_sat_down_override,
