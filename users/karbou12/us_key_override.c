@@ -200,10 +200,12 @@ const key_override_t *key_overrides[] = {
     &win_raise_backlight_down_override,
     &win_raise_backlight_up_override,
 #endif
+#if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     &win_usr_raise_hue_down_override,
     &win_usr_raise_hue_up_override,
     &win_usr_raise_sat_down_override,
     &win_usr_raise_sat_up_override,
+#endif
 };
 const uint16_t key_overrides_raw_size = ARRAY_SIZE(key_overrides);
 
