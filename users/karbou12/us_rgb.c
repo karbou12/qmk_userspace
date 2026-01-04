@@ -233,6 +233,16 @@ static void us_record_rgb_on_layer_of(const us_user_config_field_e field, const 
 
 // user key's func
 #ifdef USE_UINT16_KEYCODE_FOR_VIAL
+#ifdef BACKLIGHT_ENABLE
+static void us_update_backlight(const bool is_increase) {
+    if (is_increase) {
+        backlight_increase();
+    } else {
+        backlight_decrease();
+    }
+}
+#endif
+
 static void us_update_hue(const bool is_increase) {
     if (is_increase) {
         us_rgb_increase_hue();
@@ -504,6 +514,15 @@ bool US_RGB_process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.type == ENCODER_CW_EVENT || record->event.type == ENCODER_CCW_EVENT) {
             if (IS_QK_LIGHTING(g_us_vial_keycode16)) {
                 switch (g_us_vial_keycode16) {
+#ifdef BACKLIGHT_ENABLE
+                    case BL_UP:
+                        us_update_backlight(!(mod_state & MOD_MASK_SHIFT));
+                        break;
+                    case BL_DOWN:
+                        us_update_backlight(mod_state & MOD_MASK_SHIFT);
+                        break;
+#endif
+
                     case UG_HUEU:
                     case RM_HUEU:
                         us_update_hue(!(mod_state & MOD_MASK_SHIFT));
