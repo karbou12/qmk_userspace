@@ -67,7 +67,7 @@
 #define MAC_QAZ_RAISE_RIGHT_BOTTOM KC_HOME,        KC_PGDN,        KC_PGUP,        RALT_T(KC_END), KC_RSFT
 
 #define MAC_QAZ_RAISE_LEFT_THUMBS  KC_SPC,       LT(MAC(ADJUST), MAC(DOT)), LGUI_T(KC_BSPC)
-#define MAC_QAZ_RAISE_RIGHT_THUMBS KC_NO,        KC_NO,                     KC_NO
+#define MAC_QAZ_RAISE_RIGHT_THUMBS KC_NO,        KC_NO,                     KC_RGUI
 
 // Layer 2  Mac Lower : Symbols
 #define MAC_QAZ_LOWER_LEFT_TOP     LSFT(KC_SLSH),  LSFT(KC_QUOT),   LSFT(KC_1),    KC_BSPC,        LSFT(KC_GRAVE)
