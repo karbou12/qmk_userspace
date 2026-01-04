@@ -14,20 +14,43 @@
 #define L_ADJUST   1 << (OS_MAC_ADJUST) | 1 << (OS_WIN_ADJUST)
 #define L_NON_BASE L_RAISE | L_LOWER | L_ADJUST
 
-const key_override_t wheel_left_override  = ko_make_with_negmods(MOD_BIT(KC_LSFT), MS_WHLU, MS_WHLL, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
-const key_override_t wheel_right_override = ko_make_with_negmods(MOD_BIT(KC_LSFT), MS_WHLD, MS_WHLR, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
+const key_override_t wheel_left_override   = ko_make_with_negmods(MOD_BIT(KC_LSFT), MS_WHLU, MS_WHLL, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
+const key_override_t wheel_right_override  = ko_make_with_negmods(MOD_BIT(KC_LSFT), MS_WHLD, MS_WHLR, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
 
-const key_override_t arrow_left_override  = ko_make_with_negmods(MOD_BIT(KC_LALT), MS_WHLD, KC_LEFT, MOD_BIT(KC_LCTL));
-const key_override_t arrow_right_override = ko_make_with_negmods(MOD_BIT(KC_LALT), MS_WHLU, KC_RGHT, MOD_BIT(KC_LCTL));
+const key_override_t prev_history_override = ko_make_basic(MOD_BIT(KC_LALT), MS_WHLD, LGUI(KC_LBRC));
+const key_override_t next_history_override = ko_make_basic(MOD_BIT(KC_LALT), MS_WHLU, LGUI(KC_RBRC));
 
-const key_override_t arrow_up_override    = ko_make_basic(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), MS_WHLD, KC_UP);
-const key_override_t arrow_down_override  = ko_make_basic(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), MS_WHLU, KC_DOWN);
+const key_override_t app_prev_override     = ko_make_basic(MOD_BIT(KC_LGUI), MS_WHLD, LSG(KC_TAB));
+const key_override_t app_next_override     = ko_make_basic(MOD_BIT(KC_LGUI), MS_WHLU, LGUI(KC_TAB));
 
-const key_override_t app_prev_override    = ko_make_basic(MOD_BIT(KC_LGUI), MS_WHLD, LSG(KC_TAB));
-const key_override_t app_next_override    = ko_make_basic(MOD_BIT(KC_LGUI), MS_WHLU, LGUI(KC_TAB));
+const key_override_t tab_prev_override     = ko_make_with_negmods(MOD_BIT(KC_LCTL), MS_WHLD, LCS(KC_TAB),  MOD_BIT(KC_LALT));
+const key_override_t tab_next_override     = ko_make_with_negmods(MOD_BIT(KC_LCTL), MS_WHLU, LCTL(KC_TAB), MOD_BIT(KC_LALT));
 
-const key_override_t tab_prev_override    = ko_make_with_negmods(MOD_BIT(KC_LCTL), MS_WHLD, LSFT(LCTL(KC_TAB)), MOD_BIT(KC_LALT));
-const key_override_t tab_next_override    = ko_make_with_negmods(MOD_BIT(KC_LCTL), MS_WHLU, LCTL(KC_TAB),   MOD_BIT(KC_LALT));
+const key_override_t raise_arrow_left_override  = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LGUI(KC_PMNS), KC_LEFT, L_NON_BASE, MOD_BIT(KC_LCTL));
+const key_override_t raise_arrow_right_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LGUI(KC_PPLS), KC_RGHT, L_NON_BASE, MOD_BIT(KC_LCTL));
+
+const key_override_t raise_arrow_up_override    = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), LGUI(KC_PMNS), KC_UP, L_NON_BASE);
+const key_override_t raise_arrow_down_override  = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), LGUI(KC_PPLS), KC_DOWN, L_NON_BASE);
+
+const key_override_t win_raise_arrow_left_override  = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LCTL(KC_PMNS), KC_LEFT, L_NON_BASE, MOD_BIT(KC_LCTL));
+const key_override_t win_raise_arrow_right_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LCTL(KC_PPLS), KC_RGHT, L_NON_BASE, MOD_BIT(KC_LCTL));
+
+const key_override_t win_raise_arrow_up_override    = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), LCTL(KC_PMNS), KC_UP, L_NON_BASE);
+const key_override_t win_raise_arrow_down_override  = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), LCTL(KC_PPLS), KC_DOWN, L_NON_BASE);
+
+const key_override_t lower_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), KC_BRID, LCTL(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LSFT));
+const key_override_t lower_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), KC_BRIU, LCTL(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LSFT));
+
+// move app to prev/next space by BetterTouchTool
+const key_override_t lower_app_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LSFT), KC_BRID, LCG(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LALT));
+const key_override_t lower_app_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LSFT), KC_BRIU, LCG(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LALT));
+// move app to next monitor by BetterTouchTool
+const key_override_t lower_app_next_monitor_override = ko_make_with_layers(MOD_BIT(KC_LSFT) | MOD_BIT(KC_LALT), KC_BRIU, LCAG(KC_RGHT), L_NON_BASE);
+
+const key_override_t adjust_mouse_left_override  = ko_make_with_layers(MOD_BIT(KC_LALT), KC_VOLD, MS_LEFT, L_NON_BASE);
+const key_override_t adjust_mouse_right_override = ko_make_with_layers(MOD_BIT(KC_LALT), KC_VOLU, MS_RGHT, L_NON_BASE);
+const key_override_t adjust_mouse_down_override  = ko_make_with_layers(MOD_BIT(KC_LCTL), KC_VOLD, MS_DOWN, L_NON_BASE);
+const key_override_t adjust_mouse_up_override    = ko_make_with_layers(MOD_BIT(KC_LCTL), KC_VOLU, MS_UP,   L_NON_BASE);
 
 #ifdef CUSTOM_RGBMATRIX
 const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), MS_WHLD, RM_HUED, L_BASE);
@@ -61,6 +84,13 @@ const key_override_t usr_raise_sat_up_override   = ko_make_with_layers(MOD_BIT(K
 const key_override_t usr_raise_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PMNS), USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
 const key_override_t usr_raise_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), LGUI(KC_PPLS), USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 
+const key_override_t win_usr_raise_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), LCTL(KC_PMNS), USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
+const key_override_t win_usr_raise_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), LCTL(KC_PPLS), USR_RGB_LAYER_HUE_UP, L_NON_BASE);
+const key_override_t win_usr_raise_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), LCTL(KC_PMNS), USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
+const key_override_t win_usr_raise_sat_up_override   = ko_make_with_layers(MOD_BIT(KC_RCTL), LCTL(KC_PPLS), USR_RGB_LAYER_SAT_UP, L_NON_BASE);
+const key_override_t win_usr_raise_val_down_override = ko_make_with_layers(MOD_BIT(KC_RALT), LCTL(KC_PMNS), USR_RGB_LAYER_VAL_DOWN, L_NON_BASE);
+const key_override_t win_usr_raise_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), LCTL(KC_PPLS), USR_RGB_LAYER_VAL_UP, L_NON_BASE);
+
 const key_override_t usr_lower_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRID, USR_RGB_LAYER_HUE_DOWN, L_NON_BASE);
 const key_override_t usr_lower_hue_up_override   = ko_make_with_layers(MOD_BIT(KC_RSFT), KC_BRIU, USR_RGB_LAYER_HUE_UP, L_NON_BASE);
 const key_override_t usr_lower_sat_down_override = ko_make_with_layers(MOD_BIT(KC_RCTL), KC_BRID, USR_RGB_LAYER_SAT_DOWN, L_NON_BASE);
@@ -76,19 +106,31 @@ const key_override_t usr_adjust_val_down_override = ko_make_with_layers(MOD_BIT(
 const key_override_t usr_adjust_val_up_override   = ko_make_with_layers(MOD_BIT(KC_RALT), KC_VOLU, USR_RGB_LAYER_VAL_UP, L_NON_BASE);
 #endif
 
-#define USE_KO_VAL
-
 const key_override_t *key_overrides[] = {
     &wheel_left_override,
     &wheel_right_override,
-    &arrow_left_override,
-    &arrow_right_override,
-    &arrow_up_override,
-    &arrow_down_override,
+    &prev_history_override,
+    &next_history_override,
     &app_prev_override,
     &app_next_override,
     &tab_prev_override,
     &tab_next_override,
+
+    &raise_arrow_left_override,
+    &raise_arrow_right_override,
+    &raise_arrow_up_override,
+    &raise_arrow_down_override,
+
+    &lower_prev_space_override,
+    &lower_next_space_override,
+    &lower_app_prev_space_override,
+    &lower_app_next_space_override,
+    &lower_app_next_monitor_override,
+
+    &adjust_mouse_left_override,
+    &adjust_mouse_right_override,
+    &adjust_mouse_down_override,
+    &adjust_mouse_up_override,
 
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     &ug_hue_down_override,
@@ -101,13 +143,10 @@ const key_override_t *key_overrides[] = {
 #ifdef CUSTOM_RGBMATRIX
     &usr_def_hue_down_override,
     &usr_def_hue_up_override,
-#ifdef USE_KO_VAL
-    &usr_def_val_down_override,
-    &usr_def_val_up_override,
-#else
     &usr_def_sat_down_override,
     &usr_def_sat_up_override,
-#endif
+    &usr_def_val_down_override,
+    &usr_def_val_up_override,
 #endif
 
     &usr_raise_hue_down_override,
@@ -125,6 +164,15 @@ const key_override_t *key_overrides[] = {
     &usr_adjust_sat_down_override,
     &usr_adjust_sat_up_override,
 #endif
+
+    &win_raise_arrow_left_override,
+    &win_raise_arrow_right_override,
+    &win_raise_arrow_up_override,
+    &win_raise_arrow_down_override,
+    &win_usr_raise_hue_down_override,
+    &win_usr_raise_hue_up_override,
+    &win_usr_raise_sat_down_override,
+    &win_usr_raise_sat_up_override,
 };
 const uint16_t key_overrides_raw_size = ARRAY_SIZE(key_overrides);
 
@@ -153,7 +201,12 @@ void US_KO_keyboard_post_init_user(void) {
         }
     }
 
-    for (uint8_t i = 0; i < key_overrides_raw_size; i++) {
+    const uint16_t key_overrides_num = MIN(key_overrides_raw_size, VIAL_KEY_OVERRIDE_ENTRIES);
+#ifdef CONSOLE_ENABLE
+    uprintf("%s : array size:%u, define size:%u\n", __FUNCTION__, key_overrides_raw_size, VIAL_KEY_OVERRIDE_ENTRIES);
+#endif
+
+    for (uint8_t i = 0; i < key_overrides_num; i++) {
         vial_key_override_entry_t entry = {0};
         entry.trigger = key_overrides[i]->trigger;
         entry.replacement = key_overrides[i]->replacement;
