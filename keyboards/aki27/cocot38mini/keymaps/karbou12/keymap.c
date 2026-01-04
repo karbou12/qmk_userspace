@@ -59,38 +59,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [3] = LAYOUT_wrapper(
-        MAC_QAZ_ADJUST_LEFT_TOP,                            MAC_QAZ_ADJUST_RIGHT_TOP,
-        MAC_QAZ_ADJUST_LEFT_MIDDLE,                         MAC_QAZ_ADJUST_RIGHT_MIDDLE,
-        MAC_QAZ_ADJUST_LEFT_BOTTOM,                         MAC_QAZ_ADJUST_RIGHT_BOTTOM,
-        MAC_QAZ_ADJUST_LEFT_THUMBS_WO_DF, QK_BOOT, KC_MUTE, MAC_QAZ_ADJUST_RIGHT_THUMBS
+        MAC_QAZ_ADJUST_LEFT_TOP,                      MAC_QAZ_ADJUST_RIGHT_TOP,
+        MAC_QAZ_ADJUST_LEFT_MIDDLE,                   MAC_QAZ_ADJUST_RIGHT_MIDDLE,
+        MAC_QAZ_ADJUST_LEFT_BOTTOM,                   MAC_QAZ_ADJUST_RIGHT_BOTTOM,
+        MAC_QAZ_ADJUST_LEFT_THUMBS, QK_BOOT, KC_MUTE, MAC_QAZ_ADJUST_RIGHT_THUMBS
     ),
 
     [4] = LAYOUT_wrapper(
+        WIN_QAZ_BASE_LEFT_TOP,                    WIN_QAZ_BASE_RIGHT_TOP,
+        WIN_QAZ_BASE_LEFT_MIDDLE,                 WIN_QAZ_BASE_RIGHT_MIDDLE,
+        WIN_QAZ_BASE_LEFT_BOTTOM,                 WIN_QAZ_BASE_RIGHT_BOTTOM,
+        WIN_QAZ_BASE_LEFT_THUMBS, KC_NO, MS_BTN1, WIN_QAZ_BASE_RIGHT_THUMBS
+    ),
+
+    [5] = LAYOUT_wrapper(
+        WIN_QAZ_RAISE_LEFT_TOP,                        WIN_QAZ_RAISE_RIGHT_TOP,
+        WIN_QAZ_RAISE_LEFT_MIDDLE,                     WIN_QAZ_RAISE_RIGHT_MIDDLE,
+        WIN_QAZ_RAISE_LEFT_BOTTOM,                     WIN_QAZ_RAISE_RIGHT_BOTTOM,
+        WIN_QAZ_RAISE_LEFT_THUMBS, KC_NO, LCTL(KC_0),  WIN_QAZ_RAISE_RIGHT_THUMBS
+    ),
+
+    [6] = LAYOUT_wrapper(
+        WIN_QAZ_LOWER_LEFT_TOP,                  WIN_QAZ_LOWER_RIGHT_TOP,
+        WIN_QAZ_LOWER_LEFT_MIDDLE,               WIN_QAZ_LOWER_RIGHT_MIDDLE,
+        WIN_QAZ_LOWER_LEFT_BOTTOM,               WIN_QAZ_LOWER_RIGHT_BOTTOM,
+        WIN_QAZ_LOWER_LEFT_THUMBS, KC_NO, KC_NO, WIN_QAZ_LOWER_RIGHT_THUMBS
+    ),
+
+    [7] = LAYOUT_wrapper(
+        WIN_QAZ_ADJUST_LEFT_TOP,                      WIN_QAZ_ADJUST_RIGHT_TOP,
+        WIN_QAZ_ADJUST_LEFT_MIDDLE,                   WIN_QAZ_ADJUST_RIGHT_MIDDLE,
+        WIN_QAZ_ADJUST_LEFT_BOTTOM,                   WIN_QAZ_ADJUST_RIGHT_BOTTOM,
+        WIN_QAZ_ADJUST_LEFT_THUMBS, QK_BOOT, KC_MUTE, WIN_QAZ_ADJUST_RIGHT_THUMBS
+    ),
+
+    [8] = LAYOUT_wrapper(
         QAZ_NONE,                               QAZ_NONE,
         QAZ_NONE,                               MS_BTN1, MS_BTN2, MS_BTN3, KC_NO, KC_RCTL,
         QAZ_NONE,                               KC_NO, KC_NO, KC_NO, KC_RALT, KC_RSFT,
         CPI_SW, SCRL_MO, MS_BTN1, KC_NO, KC_NO, MS_BTN2, KC_NO, KC_NO
-    ),
-
-    [5] = LAYOUT_wrapper(
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE_THUMBS, KC_NO, KC_NO, QAZ_NONE_THUMBS
-    ),
-
-    [6] = LAYOUT_wrapper(
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE_THUMBS, KC_NO, KC_NO, QAZ_NONE_THUMBS
-    ),
-
-    [7] = LAYOUT_wrapper(
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE,                      QAZ_NONE,
-        QAZ_NONE_THUMBS, KC_NO, KC_NO, QAZ_NONE_THUMBS
     )
 };
 
@@ -101,8 +108,9 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [2] = ENCODER_BRIGHT,
     [3] = ENCODER_VOL,
     [4] = ENCODER_MS_WHEEL,
-    [5] = ENCODER_NO,
-    [6] = ENCODER_NO,
-    [7] = ENCODER_NO,
+    [5] = ENCODER_WIN_ZOOM,
+    [6] = ENCODER_BRIGHT,
+    [7] = ENCODER_VOL,
+    [8] = ENCODER_MS_WHEEL,
 };
 #endif

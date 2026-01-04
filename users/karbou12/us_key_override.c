@@ -8,7 +8,12 @@
 #define ko_make_with_negmods(trigger_mods, trigger_key, replacement_key, negative_mask) \
     ko_make_with_layers_and_negmods(trigger_mods, trigger_key, replacement_key, ~0, negative_mask)
 
+#ifdef POINTING_DEVICE_ENABLE
+#define L_MOUSE AUTO_MOUSE_DEFAULT_LAYER
+#define L_BASE     1 << (OS_MAC_BASE)   | 1 << (OS_WIN_BASE) | 1 << (L_MOUSE)
+#else
 #define L_BASE     1 << (OS_MAC_BASE)   | 1 << (OS_WIN_BASE)
+#endif
 #define L_RAISE    1 << (OS_MAC_RAISE)  | 1 << (OS_WIN_RAISE)
 #define L_LOWER    1 << (OS_MAC_LOWER)  | 1 << (OS_WIN_LOWER)
 #define L_ADJUST   1 << (OS_MAC_ADJUST) | 1 << (OS_WIN_ADJUST)
