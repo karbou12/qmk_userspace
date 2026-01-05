@@ -19,18 +19,6 @@
 #define L_ADJUST   1 << (OS_MAC_ADJUST) | 1 << (OS_WIN_ADJUST)
 #define L_NON_BASE L_RAISE | L_LOWER | L_ADJUST
 
-#define CCW_BASE       MS_WHLD
-#define CW_BASE        MS_WHLU
-#define CCW_RAISE      LGUI(KC_PMNS)
-#define CW_RAISE       LGUI(KC_PPLS)
-#define WIN_CCW_RAISE  LCTL(KC_PMNS)
-#define WIN_CW_RAISE   LCTL(KC_PPLS)
-#define CCW_LOWER      KC_BRID
-#define CW_LOWER       KC_BRIU
-#define CCW_ADJUST     KC_VOLD
-#define CW_ADJUST      KC_VOLU
-
-
 const key_override_t wheel_left_override   = ko_make_with_negmods(MOD_BIT(KC_LSFT), CW_BASE,  MS_WHLL, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
 const key_override_t wheel_right_override  = ko_make_with_negmods(MOD_BIT(KC_LSFT), CCW_BASE, MS_WHLR, MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI));
 
