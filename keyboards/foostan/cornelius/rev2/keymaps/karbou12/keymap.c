@@ -87,4 +87,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         WIN_NOR40_ADJUST_LEFT_BOTTOM,                  WIN_NOR40_ADJUST_RIGHT_BOTTOM,
         QAZ_NONE_THUMBS, WIN_QAZ_ADJUST_LEFT_THUMBS,   WIN_QAZ_ADJUST_RIGHT_THUMBS, KC_NO, KC_NO, QK_BOOT
     ),
-  };
+};
+
+#ifdef COMBO_ENABLE
+static const uint16_t PROGMEM km_combo1[] = COMBO_KEY_MS_ACL0;
+static const uint16_t PROGMEM km_combo2[] = COMBO_KEY_MS_ACL2;
+const combo_t km_key_combos[] = {
+    COMBO(km_combo1, COMBO_OUT_MS_ACL0),
+    COMBO(km_combo2, COMBO_OUT_MS_ACL2),
+};
+const uint16_t km_combo_size = ARRAY_SIZE(km_key_combos);
+#endif

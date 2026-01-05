@@ -34,6 +34,11 @@ ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
 	SRC += $(USER_PATH)/us_os.c
 endif
 
+ifeq ($(strip $(CUSTOM_COMBO)), yes)
+	OPT_DEFS += -DCUSTOM_COMBO_ENABLE
+	SRC += $(USER_PATH)/us_combo.c
+endif
+
 ifeq ($(strip $(CUSTOM_KEY_OVERRIDE)), yes)
 	OPT_DEFS += -DCUSTOM_KEY_OVERRIDE_ENABLE
 	SRC += $(USER_PATH)/us_key_override.c

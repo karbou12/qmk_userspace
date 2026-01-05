@@ -114,3 +114,13 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [8] = ENCODER_MS_WHEEL,
 };
 #endif
+
+#ifdef COMBO_ENABLE
+static const uint16_t PROGMEM km_combo1[] = COMBO_KEY_MS_ACL0;
+static const uint16_t PROGMEM km_combo2[] = COMBO_KEY_MS_ACL2;
+const combo_t km_key_combos[] = {
+    COMBO(km_combo1, COMBO_OUT_MS_ACL0),
+    COMBO(km_combo2, COMBO_OUT_MS_ACL2),
+};
+const uint16_t km_combo_size = ARRAY_SIZE(km_key_combos);
+#endif
