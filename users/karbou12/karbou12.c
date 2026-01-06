@@ -3,6 +3,7 @@
 #include "karbou12.h"
 #include "us_tap_hold.h"
 #include "us_eeconfig.h"
+#include "us_combo.h"
 #include "us_key_override.h"
 #include "us_os.h"
 #include "us_rgb.h"
@@ -188,6 +189,9 @@ void keyboard_post_init_user(void) {
 
     US_DUMP_EECONFIG();
 
+#ifdef CUSTOM_COMBO_ENABLE
+    US_COMBO_keyboard_post_init_user();
+#endif
 #ifdef CUSTOM_KEY_OVERRIDE_ENABLE
     US_KO_keyboard_post_init_user();
 #endif
