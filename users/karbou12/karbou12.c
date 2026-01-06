@@ -129,8 +129,8 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 }
 
 bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
-    if (!US_PD_is_mouse_record_kb(keycode, record)) {
-        return false;
+    if (US_PD_is_mouse_record_kb(keycode, record)) {
+        return true;
     }
     return is_mouse_record_user(keycode, record);
 }
