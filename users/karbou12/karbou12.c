@@ -3,6 +3,7 @@
 #include "karbou12.h"
 #include "us_tap_hold.h"
 #include "us_eeconfig.h"
+#include "us_tap_dance.h"
 #include "us_combo.h"
 #include "us_key_override.h"
 #include "us_os.h"
@@ -134,6 +135,10 @@ bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
     }
     return is_mouse_record_user(keycode, record);
 }
+
+bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
+    return US_PD_is_mouse_record_user(keycode, record);
+}
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
@@ -189,6 +194,9 @@ void keyboard_post_init_user(void) {
 
     US_DUMP_EECONFIG();
 
+#ifdef CUSTOM_TAP_DANCE_ENABLE
+    US_TD_keyboard_post_init_user();
+#endif
 #ifdef CUSTOM_COMBO_ENABLE
     US_COMBO_keyboard_post_init_user();
 #endif

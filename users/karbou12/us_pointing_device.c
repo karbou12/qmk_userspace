@@ -303,10 +303,17 @@ report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report) {
 bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
       case KC_LCTL:
-        return true;
       case KC_LSFT:
-        return true;
       case SCRL_MO:
+        return true;
+      default:
+        return false;
+    }
+}
+
+bool US_PD_is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
+    switch(keycode) {
+      case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
         return true;
       default:
         return false;

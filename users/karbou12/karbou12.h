@@ -12,6 +12,7 @@ extern layer_state_t layer_state_set_kb(layer_state_t state);
 extern bool process_record_kb(uint16_t keycode, keyrecord_t* record);
 extern report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report);
 extern bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
+extern bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record);
 #endif
 
 #if (EECONFIG_USER_DATA_CALC_SIZE) > 0
