@@ -23,4 +23,5 @@ extern layer_state_t US_PD_layer_state_set_kb(layer_state_t state);
 extern bool US_PD_process_record_kb(uint16_t keycode, keyrecord_t* record);
 extern report_mouse_t US_PD_pointing_device_task_kb(report_mouse_t mouse_report);
 extern bool US_PD_is_mouse_record_kb(uint16_t keycode, keyrecord_t* record);
+extern bool US_PD_is_mouse_record_user(uint16_t keycode, keyrecord_t* record);
 #endif

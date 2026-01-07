@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 #include "us_keymap.h"
 #include "us_keycodes.h"
+#include "us_tap_dance.h"
 
 #define COCOT_SCROLL_INV_DEFAULT false
 
@@ -97,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         QAZ_NONE,                               QAZ_NONE,
         QAZ_NONE,                               MS_BTN1, MS_BTN2, MS_BTN3, KC_NO, KC_RCTL,
         QAZ_NONE,                               KC_NO, KC_NO, KC_NO, KC_RALT, KC_RSFT,
-        CPI_SW, SCRL_MO, MS_BTN1, KC_NO, KC_NO, MS_BTN2, KC_NO, KC_NO
+        CPI_SW, TD(0), MS_BTN1, KC_NO, KC_NO, MS_BTN2, KC_NO, KC_NO
     )
 };
 
@@ -123,4 +124,11 @@ const combo_t km_key_combos[] = {
     COMBO(km_combo2, COMBO_OUT_MS_ACL2),
 };
 const uint16_t km_combo_size = ARRAY_SIZE(km_key_combos);
+#endif
+
+#ifdef TAP_DANCE_ENABLE
+const vial_tap_dance_entry_t km_tap_dances[] = {
+    TAP_DANCE(LCTL(KC_UP), SCRL_MO, LCTL(KC_DOWN), KC_NO, 200)
+};
+const uint16_t km_tap_dance_size = ARRAY_SIZE(km_tap_dances);
 #endif

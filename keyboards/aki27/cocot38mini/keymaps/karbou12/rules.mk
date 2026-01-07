@@ -6,6 +6,7 @@ CUSTOM_RGBLIGHT = no
 CUSTOM_RGBMATRIX = yes
 CUSTOM_KEY_OVERRIDE = yes
 CUSTOM_COMBO = yes
+CUSTOM_TAP_DANCE = yes
 
 SRC += km_rgb.c \
 	   km_tap_hold.c

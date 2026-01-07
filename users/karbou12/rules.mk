@@ -34,6 +34,11 @@ ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
 	SRC += $(USER_PATH)/us_os.c
 endif
 
+ifeq ($(strip $(CUSTOM_TAP_DANCE)), yes)
+	OPT_DEFS += -DCUSTOM_TAP_DANCE_ENABLE
+	SRC += $(USER_PATH)/us_tap_dance.c
+endif
+
 ifeq ($(strip $(CUSTOM_COMBO)), yes)
 	OPT_DEFS += -DCUSTOM_COMBO_ENABLE
 	SRC += $(USER_PATH)/us_combo.c
