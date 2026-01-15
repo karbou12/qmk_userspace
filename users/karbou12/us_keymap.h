@@ -63,7 +63,7 @@
 #define MAC_QAZ_RAISE_LEFT_BOTTOM  LSFT_T(MAC(0)), MAC(1),         MAC(2),         MAC(3),          MAC(EQUAL)
 
 #define MAC_QAZ_RAISE_RIGHT_TOP    KC_NO,          KC_BSPC,        KC_DEL,         KC_TAB,         KC_MINS
-#define MAC_QAZ_RAISE_RIGHT_MIDDLE KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       RCTL_T(KC_ENT)
+#define MAC_QAZ_RAISE_RIGHT_MIDDLE KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_ENT
 #define MAC_QAZ_RAISE_RIGHT_BOTTOM KC_HOME,        KC_PGDN,        KC_PGUP,        RALT_T(KC_END), KC_RSFT
 
 #define MAC_QAZ_RAISE_LEFT_THUMBS  KC_SPC,       LT(MAC(ADJUST), MAC(DOT)), LGUI_T(KC_BSPC)
@@ -78,7 +78,7 @@
 #define MAC_QAZ_LOWER_RIGHT_MIDDLE LSFT(KC_3),     KC_NO,           KC_LBRC,       KC_RBRC,        KC_RCTL
 #define MAC_QAZ_LOWER_RIGHT_BOTTOM LSFT(KC_7),     KC_NO,           LSFT(KC_LBRC), LSFT(KC_RBRC),  KC_RSFT
 
-#define MAC_QAZ_LOWER_LEFT_THUMBS  KC_NO,          KC_NO,           KC_NO
+#define MAC_QAZ_LOWER_LEFT_THUMBS  KC_SPC,         KC_NO,           KC_NO
 #define MAC_QAZ_LOWER_RIGHT_THUMBS RSFT_T(KC_ENT), MO(MAC(ADJUST)), KC_NO
 
 // Layer 3  Mac Adjust : Functions and Mouse
