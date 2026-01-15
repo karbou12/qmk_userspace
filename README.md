@@ -16,7 +16,7 @@ Clone qmk_userspace and vial-qmk on same directory.
 
 1. call `qmk_userspace/scripts/set_config.h` to enable userspace, it sets `qmk config user.overlay_dir`.
 2. call `qmk config user.qmk_home="<vial-qmk path>"` to build userspace with vial-qmk.
-3. add keyboard/keymap by calling `qmk_userspace/scripts/link_kb.sh <keyboard>`
+3. create symbolic keyboard/keymap of qmk_userspace into vial-qmk by calling `qmk_userspace/scripts/link_kb.sh <keyboard>`
 4. build keyboards by calling `make <keyboard>:<keymap>`
 5. flash by calling `make <keyboard>:<keymap>:flash`
 6. add keyboard/keymap into build target by calling `qmk userspace-add -kb <keyboard> -km <keymap>`.
