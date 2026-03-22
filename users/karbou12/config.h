@@ -3,6 +3,8 @@
 #pragma once
 #include "us_version.h"
 
+#define MK_3_SPEED
+
 #ifdef CAPS_WORD_ENABLE
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
 #define CAPS_WORD_IDLE_TIMEOUT 3000
