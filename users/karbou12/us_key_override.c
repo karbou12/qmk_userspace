@@ -28,31 +28,37 @@ const key_override_t next_history_override = ko_make_basic(MOD_BIT(KC_LALT), BAS
 const key_override_t app_prev_override     = ko_make_basic(MOD_BIT(KC_LGUI), BASE_CCW, LSG(KC_TAB));
 const key_override_t app_next_override     = ko_make_basic(MOD_BIT(KC_LGUI), BASE_CW,  LGUI(KC_TAB));
 
-const key_override_t tab_prev_override     = ko_make_with_negmods(MOD_BIT(KC_LCTL), BASE_CCW, LCS(KC_TAB),  MOD_BIT(KC_LALT));
-const key_override_t tab_next_override     = ko_make_with_negmods(MOD_BIT(KC_LCTL), BASE_CW,  LCTL(KC_TAB), MOD_BIT(KC_LALT));
+const key_override_t tab_prev_override     = ko_make_basic(MOD_BIT(KC_LCTL), BASE_CCW, LCS(KC_TAB));
+const key_override_t tab_next_override     = ko_make_basic(MOD_BIT(KC_LCTL), BASE_CW,  LCTL(KC_TAB));
 
-const key_override_t raise_arrow_left_override  = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), RAISE_CCW, KC_LEFT, L_NON_BASE, MOD_BIT(KC_LCTL));
-const key_override_t raise_arrow_right_override = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), RAISE_CW,  KC_RGHT, L_NON_BASE, MOD_BIT(KC_LCTL));
+const key_override_t raise_arrow_left_override  = ko_make_with_layers(MOD_BIT(KC_LCTL), RAISE_CCW, KC_LEFT, L_NON_BASE);
+const key_override_t raise_arrow_right_override = ko_make_with_layers(MOD_BIT(KC_LCTL), RAISE_CW,  KC_RGHT, L_NON_BASE);
 
-const key_override_t raise_arrow_up_override    = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), RAISE_CCW, KC_UP,   L_NON_BASE);
-const key_override_t raise_arrow_down_override  = ko_make_with_layers(MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL), RAISE_CW,  KC_DOWN, L_NON_BASE);
+const key_override_t raise_arrow_up_override    = ko_make_with_layers(MOD_BIT(KC_LGUI), RAISE_CCW, KC_UP,   L_NON_BASE);
+const key_override_t raise_arrow_down_override  = ko_make_with_layers(MOD_BIT(KC_LGUI), RAISE_CW,  KC_DOWN, L_NON_BASE);
 
-const key_override_t lower_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LOWER_CCW, LCTL(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LSFT));
-const key_override_t lower_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), LOWER_CW,  LCTL(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LSFT));
+const key_override_t lower_prev_space_override   = ko_make_with_layers(MOD_BIT(KC_LCTL), LOWER_CCW, LCTL(KC_LEFT), L_NON_BASE);
+const key_override_t lower_next_space_override   = ko_make_with_layers(MOD_BIT(KC_LCTL), LOWER_CW,  LCTL(KC_RGHT), L_NON_BASE);
 
-const key_override_t win_lower_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), WIN_LOWER_CCW, LGUI(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LSFT));
-const key_override_t win_lower_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LALT), WIN_LOWER_CW,  LGUI(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LSFT));
+const key_override_t win_lower_prev_space_override   = ko_make_with_layers(MOD_BIT(KC_LCTL), WIN_LOWER_CCW, LGUI(KC_LEFT), L_NON_BASE);
+const key_override_t win_lower_next_space_override   = ko_make_with_layers(MOD_BIT(KC_LCTL), WIN_LOWER_CW,  LGUI(KC_RGHT), L_NON_BASE);
 
 // move app to prev/next space by BetterTouchTool
-const key_override_t lower_app_prev_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LSFT), LOWER_CCW, LCG(KC_LEFT), L_NON_BASE, MOD_BIT(KC_LALT));
-const key_override_t lower_app_next_space_override   = ko_make_with_layers_and_negmods(MOD_BIT(KC_LSFT), LOWER_CW,  LCG(KC_RGHT), L_NON_BASE, MOD_BIT(KC_LALT));
+const key_override_t lower_app_prev_space_override   = ko_make_with_layers(MOD_BIT(KC_LGUI), LOWER_CCW, LCG(KC_LEFT), L_NON_BASE);
+const key_override_t lower_app_next_space_override   = ko_make_with_layers(MOD_BIT(KC_LGUI), LOWER_CW,  LCG(KC_RGHT), L_NON_BASE);
 // move app to next monitor by BetterTouchTool
-const key_override_t lower_app_next_monitor_override = ko_make_with_layers(MOD_BIT(KC_LSFT) | MOD_BIT(KC_LALT), LOWER_CW, LCAG(KC_RGHT), L_NON_BASE);
+const key_override_t lower_app_next_monitor_override = ko_make_with_layers(MOD_BIT(KC_LALT), LOWER_CW, LCAG(KC_RGHT), L_NON_BASE);
 
-const key_override_t adjust_mouse_left_override  = ko_make_with_layers(MOD_BIT(KC_LALT), ADJUST_CCW, MS_LEFT, L_NON_BASE);
-const key_override_t adjust_mouse_right_override = ko_make_with_layers(MOD_BIT(KC_LALT), ADJUST_CW,  MS_RGHT, L_NON_BASE);
-const key_override_t adjust_mouse_down_override  = ko_make_with_layers(MOD_BIT(KC_LCTL), ADJUST_CCW, MS_DOWN, L_NON_BASE);
-const key_override_t adjust_mouse_up_override    = ko_make_with_layers(MOD_BIT(KC_LCTL), ADJUST_CW,  MS_UP,   L_NON_BASE);
+const key_override_t lower_zoom_out_override = ko_make_with_layers(MOD_BIT(KC_LSFT), LOWER_CCW, LAG(KC_MINS), L_NON_BASE);
+const key_override_t lower_zoom_in_override  = ko_make_with_layers(MOD_BIT(KC_LSFT), LOWER_CW,  LAG(KC_6),   L_NON_BASE);
+
+const key_override_t adjust_mouse_left_override  = ko_make_with_layers(MOD_BIT(KC_LCTL), ADJUST_CCW, MS_LEFT, L_NON_BASE);
+const key_override_t adjust_mouse_right_override = ko_make_with_layers(MOD_BIT(KC_LCTL), ADJUST_CW,  MS_RGHT, L_NON_BASE);
+const key_override_t adjust_mouse_down_override  = ko_make_with_layers(MOD_BIT(KC_LGUI), ADJUST_CCW, MS_DOWN, L_NON_BASE);
+const key_override_t adjust_mouse_up_override    = ko_make_with_layers(MOD_BIT(KC_LGUI), ADJUST_CW,  MS_UP,   L_NON_BASE);
+
+const key_override_t adjust_media_rewind_override  = ko_make_with_layers(MOD_BIT(KC_LSFT), ADJUST_CCW, KC_MRWD,   L_NON_BASE);
+const key_override_t adjust_media_forward_override = ko_make_with_layers(MOD_BIT(KC_LSFT), ADJUST_CW,  KC_MFFD,   L_NON_BASE);
 
 #ifdef CUSTOM_RGBMATRIX
 const key_override_t ug_hue_down_override = ko_make_with_layers(MOD_BIT(KC_RSFT) | MOD_BIT(KC_RGUI), BASE_CCW, RM_HUED, L_BASE);
@@ -133,11 +139,15 @@ const key_override_t *key_overrides[] = {
     &lower_app_prev_space_override,
     &lower_app_next_space_override,
     &lower_app_next_monitor_override,
+    &lower_zoom_in_override,
+    &lower_zoom_out_override,
 
     &adjust_mouse_left_override,
     &adjust_mouse_right_override,
     &adjust_mouse_down_override,
     &adjust_mouse_up_override,
+    &adjust_media_rewind_override,
+    &adjust_media_forward_override,
 
 #if defined(RGBLIGHT_LAYERS) || defined(CUSTOM_RGBMATRIX)
     &ug_hue_down_override,
