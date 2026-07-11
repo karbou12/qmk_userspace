@@ -91,12 +91,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [0] = ENCODER_MS_WHEEL,
-    [1] = ENCODER_MAC_ZOOM,
-    [2] = ENCODER_BRIGHT,
+    [1] = ENCODER_BRIGHT,
+    [2] = ENCODER_MAC_ZOOM,
     [3] = ENCODER_VOL,
     [4] = ENCODER_MS_WHEEL,
-    [5] = ENCODER_WIN_ZOOM,
-    [6] = ENCODER_BRIGHT,
+    [5] = ENCODER_BRIGHT,
+    [6] = ENCODER_WIN_ZOOM,
     [7] = ENCODER_VOL,
     [8] = ENCODER_NO,
     [9] = ENCODER_NO
